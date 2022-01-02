@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
 // Example connection to elastic search
 namespace Manage_File_Application.DAL
 {
