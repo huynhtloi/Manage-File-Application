@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Manage_File_Application.ElasticCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,6 +15,7 @@ namespace Manage_File_Application
 {
     public partial class Form1 : Form
     {
+        private ElasticDAO elasticDAO;
         private ListViewColumnSorter lvwColumnSorter;
 
         // Stack chứa đường dẫn
@@ -35,6 +37,9 @@ namespace Manage_File_Application
             // Tránh khi load Form auto focus vào các textbox
             this.ActiveControl = numItems;
 
+            // Khởi tạo Elastic
+            elasticDAO = new ElasticDAO();
+            
             // Khởi tạo cây thư mục
             InitTreeFolder();
 
@@ -119,7 +124,7 @@ namespace Manage_File_Application
         private void treeFolder_AfterSelect(object sender, TreeViewEventArgs e)
         {
             // Scan file trong folder được chọn trong cây thư mục
-            scanFile(e.Node.FullPath);
+            scanFileAsync(e.Node.FullPath);
 
             // Push đường dẫn folder vào stack để navigation
             pathStack.Push(e.Node.FullPath);
@@ -208,7 +213,7 @@ namespace Manage_File_Application
         }
 
         // Scan file trong thư mục hiện tại theo đường dẫn để add vào listview
-        private void scanFile(string path)
+        private async Task scanFileAsync(string path)
         {
             try
             {
@@ -220,6 +225,8 @@ namespace Manage_File_Application
                 // lấy danh sách các file trong thư mục path
                 string[] arrFiles = Directory.GetFiles(path);
 
+                // xoá index trên elastic
+                bool response = await elasticDAO.DeleteAll();
                 foreach (string file in arrFiles)
                 {
                     // duyệt qua các file có nội dung là text
@@ -228,14 +235,24 @@ namespace Manage_File_Application
                         file.ToLower().EndsWith(".docx") ||
                         file.ToLower().EndsWith(".pdf"))
                     {
+                        FileInfo fileInfo = new FileInfo(file);
+                        elasticDAO.Create(new Models.File()
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            Name = fileInfo.FullName,
+                            Content = File.ReadAllText(fileInfo.ToString()),
+                            Extension = fileInfo.Extension,
+                            DateCreate = fileInfo.CreationTime
+                        });
                         addItemToListView(file);
                     }
                 }
+                
                 this.Cursor = Cursors.Default;
             }
             catch (Exception ex) // Có một số folder không cấp quyền truy cập sẽ lỗi
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, ex.Source);
             }
         }
 
@@ -244,14 +261,14 @@ namespace Manage_File_Application
         {
             if (e.KeyData == Keys.Enter)
             {
-                scanFile(txtPath.Text);
+                scanFileAsync(txtPath.Text);
             }
         }
 
         // Scan file in folder in txtPath
         private void btnGo_Click(object sender, EventArgs e)
         {
-            scanFile(txtPath.Text);
+            scanFileAsync(txtPath.Text);
         }
 
         // Mở file theo định dạng tương ứng
@@ -335,7 +352,7 @@ namespace Manage_File_Application
                         {
                             // Đổi tên file
                             File.Move(filePath, newFileName);
-                            scanFile(currentDir);
+                            scanFileAsync(currentDir);
 
                             // Thông báo đổi tên thành công
                             if (File.Exists(newFileName))
@@ -364,7 +381,7 @@ namespace Manage_File_Application
             {
                 tmpPathPop.Push(pathStack.Pop());
 
-                scanFile(pathStack.Peek());
+                scanFileAsync(pathStack.Peek());
                 txtPath.Text = pathStack.Peek();
 
                 btnForward.Enabled = true;
@@ -388,7 +405,7 @@ namespace Manage_File_Application
             {
                 pathStack.Push(tmpPathPop.Pop());
 
-                scanFile(pathStack.Peek());
+                scanFileAsync(pathStack.Peek());
                 txtPath.Text = pathStack.Peek();
 
                 btnBack.Enabled = true;
@@ -418,7 +435,7 @@ namespace Manage_File_Application
                         // Xóa file
                         File.Delete(filePath);
 
-                        scanFile(currentDir);
+                        scanFileAsync(currentDir);
 
                         // Kiểm tra lại xem file còn tồn tại không.
                         if (!File.Exists(filePath))
@@ -448,7 +465,7 @@ namespace Manage_File_Application
             listView.View = View.LargeIcon;
             string path = txtPath.Text;
             if (path != String.Empty)
-                scanFile(path);
+                scanFileAsync(path);
         }
 
         // View SmallIcon
@@ -457,7 +474,7 @@ namespace Manage_File_Application
             listView.View = View.SmallIcon;
             string path = txtPath.Text;
             if (path != String.Empty)
-                scanFile(path);
+                scanFileAsync(path);
         }
 
         // View Details
@@ -466,7 +483,7 @@ namespace Manage_File_Application
             listView.View = View.Details;
             string path = txtPath.Text;
             if (path != String.Empty)
-                scanFile(path);
+                scanFileAsync(path);
         }
 
         // View List
@@ -475,7 +492,7 @@ namespace Manage_File_Application
             listView.View = View.List;
             string path = txtPath.Text;
             if (path != String.Empty)
-                scanFile(path);
+                scanFileAsync(path);
         }
 
         // View Tile
@@ -484,7 +501,7 @@ namespace Manage_File_Application
             listView.View = View.Tile;
             string path = txtPath.Text;
             if (path != String.Empty)
-                scanFile(path);
+                scanFileAsync(path);
         }
     }
 }
