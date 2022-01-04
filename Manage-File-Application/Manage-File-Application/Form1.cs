@@ -1,5 +1,6 @@
 ﻿using Manage_File_Application.ElasticCore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -225,6 +226,9 @@ namespace Manage_File_Application
                 // lấy danh sách các file trong thư mục path
                 string[] arrFiles = Directory.GetFiles(path);
 
+                // lấy danh sách các file dưa lên elastic
+                List<Models.File> elasticFiles = new List<Models.File>();
+
                 // xoá index trên elastic
                 bool response = await elasticDAO.DeleteAll();
                 foreach (string file in arrFiles)
@@ -236,10 +240,11 @@ namespace Manage_File_Application
                         file.ToLower().EndsWith(".pdf"))
                     {
                         FileInfo fileInfo = new FileInfo(file);
-                        elasticDAO.Create(new Models.File()
+                        await elasticDAO.Create(new Models.File()
                         {
-                            Id = Guid.NewGuid().ToString(),
-                            Name = fileInfo.FullName,
+                            Id = fileInfo.FullName,
+                            Name = fileInfo.Name,
+                            Path = file,
                             Content = File.ReadAllText(fileInfo.ToString()),
                             Extension = fileInfo.Extension,
                             DateCreate = fileInfo.CreationTime
@@ -502,6 +507,20 @@ namespace Manage_File_Application
             string path = txtPath.Text;
             if (path != String.Empty)
                 scanFileAsync(path);
+        }
+
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            string nameField = txtSearchName.Text;
+            string contentField = txtSearchContent.Text;
+            List<Models.File> files = elasticDAO.Search(nameField);
+
+            listView.Items.Clear();
+            listView.Refresh();
+            foreach (Models.File f in files)
+            {
+                addItemToListView(f.Path);
+            }
         }
     }
 }

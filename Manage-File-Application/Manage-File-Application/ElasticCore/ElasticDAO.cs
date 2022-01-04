@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Manage_File_Application.Models;
 
 namespace Manage_File_Application.ElasticCore
 {
@@ -21,6 +22,16 @@ namespace Manage_File_Application.ElasticCore
             return connect.client.Search<File>().Documents.ToList();
         }
 
+        public List<File> Search(string keyword)
+        {
+            List<File> response = null;
+            response = connect.client.SearchAsync<File>(ele => ele
+                                    .Query(qry => qry
+                                        .QueryString(qryStr => qryStr
+                                        .Query("*" + keyword + "*")
+                                        .Fields(fs => fs.Fields(ff=>ff.Name, ff=>ff.Content))))).Result.Documents.ToList();
+            return response;
+        }
         public List<File> SearchByField(string field, string query)
         {
             List<File> response = null;
@@ -32,11 +43,9 @@ namespace Manage_File_Application.ElasticCore
                 case "name":
                     response = connect.client.SearchAsync<File>(ele => ele
                                     .Query(qry => qry
-                                        .Bool(b => b
-                                            .Must(m => m
-                                                .Match(mc => mc
-                                                    .Field(file => file.Name)
-                                                    .Query(query)))))).Result.Documents.ToList();
+                                        .QueryString(qryStr => qryStr
+                                        .DefaultField(df => df.Name)
+                                        .Query("*"+ query + "*")))).Result.Documents.ToList();
                     return response;
 
                 case "content":
@@ -63,6 +72,13 @@ namespace Manage_File_Application.ElasticCore
             return null;
         }
 
+        public async Task<bool> refreshRecords(File[] files)
+        {
+            var response = await connect.client.BulkAsync(b=>b.Index("manager_files").IndexMany<File>(files)
+                       .Refresh(Elasticsearch.Net.Refresh.True));
+            return CheckResponse(response);
+        }
+
         public bool CheckResponse(Nest.IResponse response)
         {
             if ((response.ApiCall.HttpStatusCode == 201 || response.ApiCall.HttpStatusCode == 200) && response.ApiCall.Success == true)
@@ -73,15 +89,15 @@ namespace Manage_File_Application.ElasticCore
         }
 
         //add new
-        public bool Create(File file)
+        public async Task<bool> Create(File file)
         {
-            file.Id = Guid.NewGuid().ToString();
-            var response = connect.client.Index<File>(file, i => i
+            var response = await connect.client.IndexAsync<File>(file, i => i
                        .Index("manager_files")
                        .Id(file.Id)
                        .Refresh(Elasticsearch.Net.Refresh.True));
             return CheckResponse(response);
         }
+
 
         //
         public async Task<bool> Delete(string id)
@@ -89,7 +105,6 @@ namespace Manage_File_Application.ElasticCore
             var response = await connect.client.DeleteAsync<File>(id, i => i
                 .Index("manager_files")
                 .Refresh(Elasticsearch.Net.Refresh.True));
-            var abc = 1;
             return CheckResponse(response);
         }
 

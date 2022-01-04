@@ -52,7 +52,6 @@ D:\Computer Sience\Programming\Chuyen De CNPM\Final\Manage-File-Application\Mana
 D:\Computer Sience\Programming\Chuyen De CNPM\Final\Manage-File-Application\Manage-File-Application\Manage-File-Application\obj\Debug\Manage_File_Application.Properties.Resources.resources
 D:\Computer Sience\Programming\Chuyen De CNPM\Final\Manage-File-Application\Manage-File-Application\Manage-File-Application\obj\Debug\Manage-File-Application.csproj.GenerateResource.cache
 D:\Computer Sience\Programming\Chuyen De CNPM\Final\Manage-File-Application\Manage-File-Application\Manage-File-Application\obj\Debug\Manage-File-Application.csproj.CoreCompileInputs.cache
-D:\Computer Sience\Programming\Chuyen De CNPM\Final\Manage-File-Application\Manage-File-Application\Manage-File-Application\obj\Debug\Manage-File-Application.csproj.CopyComplete
 D:\Computer Sience\Programming\Chuyen De CNPM\Final\Manage-File-Application\Manage-File-Application\Manage-File-Application\obj\Debug\Manage-File-Application.exe
 D:\Computer Sience\Programming\Chuyen De CNPM\Final\Manage-File-Application\Manage-File-Application\Manage-File-Application\obj\Debug\Manage-File-Application.pdb
 D:\Computer Sience\Programming\Chuyen De CNPM\Final\Temp\Manage-File-Application\Manage-File-Application\bin\Debug\Manage-File-Application.exe.config
