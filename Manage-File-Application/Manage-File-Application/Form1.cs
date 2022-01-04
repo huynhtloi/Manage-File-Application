@@ -1,4 +1,6 @@
-﻿using Manage_File_Application.ElasticCore;
+﻿using iTextSharp.text.pdf;
+using iTextSharp.text.pdf.parser;
+using Manage_File_Application.ElasticCore;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -522,5 +524,20 @@ namespace Manage_File_Application
                 addItemToListView(f.Path);
             }
         }
+        private string GetTextFromPDF(string path)
+        {
+            StringBuilder text = new StringBuilder();
+            using (PdfReader reader = new PdfReader(path))
+            {
+                for (int i = 1; i <= reader.NumberOfPages; i++)
+                {
+                    text.Append(PdfTextExtractor.GetTextFromPage(reader, i));
+                }
+            }
+
+            return text.ToString();
+        }
+
     }
 }
+
