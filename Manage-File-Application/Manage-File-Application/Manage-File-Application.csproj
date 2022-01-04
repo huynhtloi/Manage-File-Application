@@ -113,9 +113,14 @@
     <Folder Include="View\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="images\add_file.png" />
+    <Content Include="images\add_folder.png" />
     <Content Include="images\arrow-down.png" />
     <Content Include="images\arrow-right.png" />
     <Content Include="images\back.png" />
+    <Content Include="images\back_arrow.png" />
+    <Content Include="images\copy.png" />
+    <Content Include="images\cut.png" />
     <Content Include="images\delete.png" />
     <Content Include="images\deleteFile.png" />
     <Content Include="images\details.png" />
@@ -125,9 +130,17 @@
     <Content Include="images\folder.png" />
     <Content Include="images\folder_open.png" />
     <Content Include="images\forward.png" />
+    <Content Include="images\forward_arrow.png" />
+    <Content Include="images\go.png" />
     <Content Include="images\largeIcon-svg.png" />
+    <Content Include="images\large_icon.png" />
     <Content Include="images\list.png" />
+    <Content Include="images\open.png" />
+    <Content Include="images\paste.png" />
+    <Content Include="images\rename.png" />
+    <Content Include="images\search.png" />
     <Content Include="images\smallIcon-svg.png" />
+    <Content Include="images\small_icon.png" />
     <Content Include="images\tiles.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
