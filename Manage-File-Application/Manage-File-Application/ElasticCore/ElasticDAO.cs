@@ -51,7 +51,7 @@ namespace Manage_File_Application.ElasticCore
                                     .Query(qry => qry
                                         .QueryString(qryStr => qryStr
                                         .DefaultField(df => df.Content)
-                                        .Query(".*" + query + ".*")))).Result.Documents.ToList();
+                                        .Query(query)))).Result.Documents.ToList();
                     return response;
             }
 
@@ -84,7 +84,14 @@ namespace Manage_File_Application.ElasticCore
             return CheckResponse(response);
         }
 
-
+        public async Task<bool> Rename(string id, string newName)
+        {
+            var response = await connect.client.UpdateAsync<File>(id, i => i
+                       .Index("manager_files")
+                       .Doc(new File() { Name = newName })
+                       .Refresh(Elasticsearch.Net.Refresh.True));
+            return CheckResponse(response);
+        }
         //
         public async Task<bool> Delete(string id)
         {

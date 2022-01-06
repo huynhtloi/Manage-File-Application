@@ -56,10 +56,6 @@ namespace Manage_File_Application
             btnBack.Enabled = false;
             btnForward.Enabled = false;
 
-            // Khởi tạo sort col trong listView
-            lvwColumnSorter = new ListViewColumnSorter();
-            listView.ListViewItemSorter = lvwColumnSorter;
-
             // Title for element in form
             toolTip.SetToolTip(numItemsSelected, "Total item selected");
             toolTip.SetToolTip(numItems, "Total item count");
@@ -227,11 +223,6 @@ namespace Manage_File_Application
             // Tính size file
             itemList.SubItems.Add(calFileSize(fileInfo.Length));
 
-            // Col content
-            if (fileInfo.Extension == ".txt")
-            {
-                itemList.SubItems.Add(File.ReadAllText(fileInfo.ToString()));
-            }
         }
 
         private string calFileSize(float fileSize)
@@ -287,6 +278,7 @@ namespace Manage_File_Application
         {
             try
             {
+                listView.ListViewItemSorter = null;
                 this.Cursor = Cursors.WaitCursor;
                 numItems.Text = "Items: 0";
                 txtPath.Text = path;
@@ -301,15 +293,13 @@ namespace Manage_File_Application
 
                 elasticFiles = new List<Model.File>();
 
+
+                // Khởi tạo sort col trong listView
                 foreach (string file in arrFiles)
                 {
+                    FileInfo fileInfo = new FileInfo(file);
                     // duyệt qua các file có nội dung là text
-                    if (file.ToLower().EndsWith(".txt") ||
-                        file.ToLower().EndsWith(".doc") ||
-                        file.ToLower().EndsWith(".docx") ||
-                        file.ToLower().EndsWith(".pdf"))
-                    {
-                        FileInfo fileInfo = new FileInfo(file);
+                    
                         elasticFiles.Add(new Model.File()
                         {
                             Id = fileInfo.FullName,
@@ -320,7 +310,6 @@ namespace Manage_File_Application
                             DateCreate = fileInfo.CreationTime
                         });
                         addFileToListView(file);
-                    }
                 }
 
                 // lấy danh sách các folder trong thư mục path
@@ -340,11 +329,13 @@ namespace Manage_File_Application
                     });
                     addFolderToListView(folder);
                 }
-
+                object lockObject = new object();
                 foreach (Model.File f in elasticFiles)
                 {
-                    f.Content = ReadContent(f.Extension, f.Path);
-                    elasticDAO.Create(f);
+                    lock (lockObject)
+                    {
+                        Task task = Task.Run(() => ReadFileAndAddElastic(f));
+                    }
                 }
 
                 // Đếm số file trong folder hiện tại
@@ -360,7 +351,8 @@ namespace Manage_File_Application
                 btnOpen.Enabled = false;
 
                 this.Cursor = Cursors.Default;
-                this.Cursor = Cursors.Default;
+                lvwColumnSorter = new ListViewColumnSorter();
+                listView.ListViewItemSorter = lvwColumnSorter;
             }
             catch (Exception ex) // Có một số folder không cấp quyền truy cập sẽ lỗi
             {
@@ -368,7 +360,13 @@ namespace Manage_File_Application
                 MessageBox.Show(ex.Message, ex.Source);
             }
         }
-
+        private void ReadFileAndAddElastic(Model.File f)
+        {
+                if (f.Extension.Equals(".docx") || f.Extension.Equals(".doc") ||
+                    f.Extension.Equals(".pdf") || f.Extension.Equals(".txt"))
+                    f.Content = ReadContent(f.Extension, f.Path);
+                elasticDAO.Create(f);
+        }
 
         // Scan file in folder in txtPath
         private void txtPath_KeyDown(object sender, KeyEventArgs e)
@@ -630,6 +628,9 @@ namespace Manage_File_Application
                             else // File
                             {
                                 FileInfo file = (FileInfo) item.Tag;
+                                using (File.Create(file.FullName))
+                                {
+                                }
                                 File.Delete(file.FullName);
                             }
                         }
@@ -652,6 +653,7 @@ namespace Manage_File_Application
             if (listView.SelectedItems.Count > 0)
             {
                 listView.SelectedItems[0].BeginEdit();
+                txtSearch.Text = listView.SelectedItems[0].Text;
             }
         }
 
