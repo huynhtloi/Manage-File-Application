@@ -1,4 +1,7 @@
-﻿using System;
+﻿using iTextSharp.text.pdf;
+using iTextSharp.text.pdf.parser;
+using Manage_File_Application.ElasticCore;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,7 +10,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -15,8 +20,9 @@ namespace Manage_File_Application
 {
     public partial class Form1 : Form
     {
+        private ElasticDAO elasticDAO;
         private ListViewColumnSorter lvwColumnSorter;
-
+        private List<Model.File> elasticFiles;
         // Stack chứa đường dẫn
         private Stack<string> pathStack = new Stack<string>();
 
@@ -42,6 +48,9 @@ namespace Manage_File_Application
 
             // Khởi tạo cây thư mục
             InitTreeFolder();
+
+            // Khởi tạo Elastic
+            elasticDAO = new ElasticDAO();
 
             // Disable nút back, forward
             btnBack.Enabled = false;
@@ -128,7 +137,7 @@ namespace Manage_File_Application
                         continue;
                     }
 
-                    TreeNode n = node.Nodes.Add(Path.GetFileName(dir));
+                    TreeNode n = node.Nodes.Add(System.IO.Path.GetFileName(dir));
                     n.Nodes.Add("Temp");
                 }
             }
@@ -148,10 +157,10 @@ namespace Manage_File_Application
             openFolder(new DirectoryInfo(e.Node.FullPath).FullName);
         }
 
-        private void openFolder(string fullPath)
+        private  void openFolder(string fullPath)
         {
             // Scan file trong folder được chọn trong cây thư mục
-            scanFile(fullPath);
+             scanFileAsync(fullPath);
 
             // Push đường dẫn folder vào stack để navigation
             pathStack.Push(fullPath);
@@ -274,17 +283,23 @@ namespace Manage_File_Application
         }
 
         // Scan file trong thư mục hiện tại theo đường dẫn để add vào listview
-        private void scanFile(string path)
+        private async Task scanFileAsync(string path)
         {
             try
             {
                 this.Cursor = Cursors.WaitCursor;
-                listView.Items.Clear();
                 numItems.Text = "Items: 0";
                 txtPath.Text = path;
+                listView.Items.Clear();
 
                 // lấy danh sách các file trong thư mục path
                 string[] arrFiles = Directory.GetFiles(path);
+
+
+                // xoá index trên elastic
+                bool response = await elasticDAO.DeleteAll();
+
+                elasticFiles = new List<Model.File>();
 
                 foreach (string file in arrFiles)
                 {
@@ -294,6 +309,16 @@ namespace Manage_File_Application
                         file.ToLower().EndsWith(".docx") ||
                         file.ToLower().EndsWith(".pdf"))
                     {
+                        FileInfo fileInfo = new FileInfo(file);
+                        elasticFiles.Add(new Model.File()
+                        {
+                            Id = fileInfo.FullName,
+                            Name = fileInfo.Name,
+                            Path = file,
+                            isFolder = false,
+                            Extension = fileInfo.Extension,
+                            DateCreate = fileInfo.CreationTime
+                        });
                         addFileToListView(file);
                     }
                 }
@@ -303,11 +328,27 @@ namespace Manage_File_Application
 
                 foreach (string folder in arrFolders)
                 {
+                    FileInfo fileInfo = new FileInfo(folder);
+                    elasticFiles.Add(new Model.File()
+                    {
+                        Id = fileInfo.FullName,
+                        Name = fileInfo.Name,
+                        Path = folder,
+                        isFolder = true,
+                        Extension = "",
+                        DateCreate = fileInfo.CreationTime
+                    });
                     addFolderToListView(folder);
                 }
 
+                foreach (Model.File f in elasticFiles)
+                {
+                    f.Content = ReadContent(f.Extension, f.Path);
+                    elasticDAO.Create(f);
+                }
+
                 // Đếm số file trong folder hiện tại
-                numItems.Text = "Items: " + listView.Items.Count;
+                numItems.Text = "Items: " + (new DirectoryInfo(path).GetDirectories().Length + new DirectoryInfo(path).GetFiles().Length);
 
                 numItemsSelected.Text = listView.SelectedIndices.Count.ToString() + " items selected";
 
@@ -319,26 +360,29 @@ namespace Manage_File_Application
                 btnOpen.Enabled = false;
 
                 this.Cursor = Cursors.Default;
+                this.Cursor = Cursors.Default;
             }
             catch (Exception ex) // Có một số folder không cấp quyền truy cập sẽ lỗi
             {
-                MessageBox.Show(ex.Message);
+                this.Cursor = Cursors.Default;
+                MessageBox.Show(ex.Message, ex.Source);
             }
         }
+
 
         // Scan file in folder in txtPath
         private void txtPath_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyData == Keys.Enter)
             {
-                scanFile(txtPath.Text);
+                scanFileAsync(txtPath.Text);
             }
         }
 
         // Scan file in folder in txtPath
         private void btnGo_Click(object sender, EventArgs e)
         {
-            scanFile(txtPath.Text);
+            scanFileAsync(txtPath.Text);
         }
 
         // Mở file theo định dạng tương ứng
@@ -436,7 +480,7 @@ namespace Manage_File_Application
         {
             string path = listView.FocusedItem.SubItems[1].Text;
 
-            var currentDir = Path.GetDirectoryName(path);
+            var currentDir = System.IO.Path.GetDirectoryName(path);
 
             ListViewItem item = listView.SelectedItems[0];
 
@@ -456,7 +500,7 @@ namespace Manage_File_Application
                 // folder
                 if (item.Tag.GetType() == typeof(DirectoryInfo))
                 {
-                    string newFolderName = Path.Combine(currentDir, e.Label);
+                    string newFolderName = System.IO.Path.Combine(currentDir, e.Label);
                     // Bắt trùng tên folder
                     if (Directory.Exists(newFolderName))
                     {
@@ -473,7 +517,7 @@ namespace Manage_File_Application
                 else  // file
                 {
                     // Nối path với tên file sửa
-                    string newFileName = Path.Combine(currentDir, e.Label);
+                    string newFileName = System.IO.Path.Combine(currentDir, e.Label);
 
                     // Kiểm tra tên file sửa có trùng với tên file nào hiện có trong thư mục
                     if (File.Exists(newFileName))
@@ -516,7 +560,7 @@ namespace Manage_File_Application
             {
                 tmpPathPop.Push(pathStack.Pop());
 
-                scanFile(pathStack.Peek());
+                scanFileAsync(pathStack.Peek());
                 txtPath.Text = pathStack.Peek();
 
                 btnForward.Enabled = true;
@@ -540,7 +584,7 @@ namespace Manage_File_Application
             {
                 pathStack.Push(tmpPathPop.Pop());
 
-                scanFile(pathStack.Peek());
+                scanFileAsync(pathStack.Peek());
                 txtPath.Text = pathStack.Peek();
 
                 btnBack.Enabled = true;
@@ -650,7 +694,7 @@ namespace Manage_File_Application
         {
             string path = txtPath.Text;
             if (path != String.Empty)
-                scanFile(path);
+                scanFileAsync(path);
         }
 
         // Context Menu
@@ -870,7 +914,7 @@ namespace Manage_File_Application
             try
             {
                 DirectoryInfo folder = new DirectoryInfo(path);
-                string destinationPath = Path.Combine(txtPath.Text, folder.Name);
+                string destinationPath = System.IO.Path.Combine(txtPath.Text, folder.Name);
 
                 DirectoryInfo destinationFolder = new DirectoryInfo(destinationPath);
 
@@ -896,12 +940,12 @@ namespace Manage_File_Application
 
             foreach (FileInfo file in folder.GetFiles())
             {
-                file.CopyTo(Path.Combine(destinationFolder.FullName, file.Name));
+                file.CopyTo(System.IO.Path.Combine(destinationFolder.FullName, file.Name));
             }
 
             foreach (DirectoryInfo subFolder in folder.GetDirectories())
             {
-                DirectoryInfo destPath = new DirectoryInfo(Path.Combine(destinationFolder.FullName, subFolder.Name));
+                DirectoryInfo destPath = new DirectoryInfo(System.IO.Path.Combine(destinationFolder.FullName, subFolder.Name));
                 copyAllInFolder(subFolder, destPath);
             }
         }
@@ -911,15 +955,15 @@ namespace Manage_File_Application
             try
             {
                 FileInfo file = new FileInfo(path);
-                string destinationPath = Path.Combine(txtPath.Text, file.Name);
+                string destinationPath = System.IO.Path.Combine(txtPath.Text, file.Name);
                 string newDestinationPath = destinationPath;
 
                 if (isCopy)
                 {
                     if (File.Exists(destinationPath))
                     {
-                        var tmp = Path.GetFileNameWithoutExtension(file.Name) + " - Copy (" + numFilePaste + ")" + file.Extension;
-                        newDestinationPath = Path.Combine(txtPath.Text, tmp);
+                        var tmp = System.IO.Path.GetFileNameWithoutExtension(file.Name) + " - Copy (" + numFilePaste + ")" + file.Extension;
+                        newDestinationPath = System.IO.Path.Combine(txtPath.Text, tmp);
                         numFilePaste++;
                     }
                     file.CopyTo(newDestinationPath);
@@ -950,7 +994,7 @@ namespace Manage_File_Application
         {
             // Tạo ra Folder với tên mặc định là New Folder
             DirectoryInfo curDirectory = new DirectoryInfo(txtPath.Text);
-            string path = Path.Combine(curDirectory.FullName, "New Folder");
+            string path = System.IO.Path.Combine(curDirectory.FullName, "New Folder");
             string newFolderPath = path;
             int numFolder = 1;
 
@@ -979,15 +1023,15 @@ namespace Manage_File_Application
             // Tạo ra file txt với tên mặc định là New Text Document 
             DirectoryInfo curDirectory = new DirectoryInfo(txtPath.Text);
             string defaultFile = "New Text Document.txt";
-            string path = Path.Combine(curDirectory.FullName, defaultFile);
+            string path = System.IO.Path.Combine(curDirectory.FullName, defaultFile);
             string newFilePath = path;
 
             int numFile = 1;
 
             while (File.Exists(newFilePath))
             {
-                var tmp = Path.GetFileNameWithoutExtension(defaultFile) + " (" + numFile + ").txt";
-                newFilePath = Path.Combine(curDirectory.FullName, tmp);
+                var tmp = System.IO.Path.GetFileNameWithoutExtension(defaultFile) + " (" + numFile + ").txt";
+                newFilePath = System.IO.Path.Combine(curDirectory.FullName, tmp);
                 numFile++;
             }
 
@@ -1024,7 +1068,31 @@ namespace Manage_File_Application
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
+            int selectedIndx = cbChooseSearch.SelectedIndex;
+            string keyword = txtSearch.Text;
+            List<Model.File> files = elasticDAO.SearchByField(selectedIndx, keyword);
 
+            // Clear list view 
+            listView.Items.Clear();
+            listView.Refresh();
+
+            // Thêm file vao list
+            foreach (Model.File f in files)
+            {
+                if (!f.isFolder)
+                {
+                    addFileToListView(f.Path);
+                }
+            }
+
+            // Thêm folder vào list
+            foreach (Model.File f in files)
+            {
+                if (f.isFolder)
+                {
+                    addFolderToListView(f.Path);
+                }
+            }
         }
 
         private void txtSearch_Enter(object sender, EventArgs e)
@@ -1043,6 +1111,65 @@ namespace Manage_File_Application
                 txtSearch.Text = "Enter some text here";
                 txtSearch.ForeColor = Color.Gray;
             }
+        }
+
+        private string ReadContent(string extension, string path)
+        {
+            try
+            {
+                if (extension.Equals(".doc") || extension.Equals(".docx"))
+                {
+                    return GetTextFromWord(path);
+                }
+                else if (extension.Equals(".pdf"))
+                {
+                    return GetTextFromPDF(path);
+                }
+                else if (extension.Equals(".txt"))
+                {
+                    return GetTextFromText(path);
+                }
+            } catch
+            {
+                return "";
+            }
+            return "";
+        }
+
+        private string GetTextFromPDF(string path)
+        {
+            StringBuilder text = new StringBuilder();
+            using (PdfReader reader = new PdfReader(path))
+            {
+                for (int i = 1; i <= reader.NumberOfPages; i++)
+                {
+                    text.Append(PdfTextExtractor.GetTextFromPage(reader, i));
+                }
+            }
+
+            return text.ToString();
+        }
+
+        private string GetTextFromWord(object path)
+        {
+            StringBuilder text = new StringBuilder();
+            Microsoft.Office.Interop.Word.Application word = new Microsoft.Office.Interop.Word.Application();
+            object miss = System.Reflection.Missing.Value;
+            object readOnly = true;
+            Microsoft.Office.Interop.Word.Document docs = word.Documents.Open(ref path, ref miss, ref readOnly, ref miss, ref miss, ref miss, ref miss, ref miss, ref miss, ref miss, ref miss, ref miss, ref miss, ref miss, ref miss, ref miss);
+
+            for (int i = 0; i < docs.Paragraphs.Count; i++)
+            {
+                text.Append(" " + docs.Paragraphs[i + 1].Range.Text.ToString());
+            }
+
+            return text.ToString();
+        }
+        private string GetTextFromText(string path)
+        {
+            string text = File.ReadAllText(path);
+
+            return text.ToString();
         }
     }
 }
