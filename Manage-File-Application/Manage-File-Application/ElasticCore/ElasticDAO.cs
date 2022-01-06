@@ -17,22 +17,7 @@ namespace Manage_File_Application.ElasticCore
             connect = new ConnectionToES();
         }
 
-        public List<File> SearchAll()
-        {
-            return connect.client.Search<File>().Documents.ToList();
-        }
-
-        public List<File> Search(string keyword)
-        {
-            List<File> response = null;
-            response = connect.client.SearchAsync<File>(ele => ele
-                                    .Query(qry => qry
-                                        .QueryString(qryStr => qryStr
-                                        .Query("*" + keyword + "*")
-                                        .Fields(fs => fs.Fields(ff => ff.Name, ff => ff.Content))))).Result.Documents.ToList();
-            return response;
-        }
-        public List<File> SearchByField(int field, string query)
+        public List<File> SearchByField(int field, string query, string index)
         {
             List<File> response = null;
 
@@ -40,6 +25,7 @@ namespace Manage_File_Application.ElasticCore
             {
                 case 0:
                     response = connect.client.SearchAsync<File>(ele => ele
+                                    .Index("manager_files")
                                     .Query(qry => qry
                                         .QueryString(qryStr => qryStr
                                         .DefaultField(df => df.Name)
@@ -48,6 +34,7 @@ namespace Manage_File_Application.ElasticCore
 
                 case 1:
                     response = connect.client.SearchAsync<File>(ele => ele
+                                    .Index("manager_files")
                                     .Query(qry => qry
                                         .QueryString(qryStr => qryStr
                                         .DefaultField(df => df.Content)
@@ -58,12 +45,6 @@ namespace Manage_File_Application.ElasticCore
             return null;
         }
 
-        public async Task<bool> refreshRecords(File[] files)
-        {
-            var response = await connect.client.BulkAsync(b => b.Index("manager_files").IndexMany<File>(files)
-                       .Refresh(Elasticsearch.Net.Refresh.True));
-            return CheckResponse(response);
-        }
 
         public bool CheckResponse(Nest.IResponse response)
         {
@@ -78,7 +59,7 @@ namespace Manage_File_Application.ElasticCore
         public bool Create(File file)
         {
             var response = connect.client.Index<File>(file, i => i
-                       .Index("manager_files")
+                        .Index("manager_files")
                        .Id(file.Id)
                        .Refresh(Elasticsearch.Net.Refresh.True));
             return CheckResponse(response);

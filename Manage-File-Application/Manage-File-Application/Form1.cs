@@ -23,6 +23,13 @@ namespace Manage_File_Application
         private ElasticDAO elasticDAO;
         private ListViewColumnSorter lvwColumnSorter;
         private List<Model.File> elasticFiles;
+        private CancellationTokenSource tokenSource;
+        private bool cancelTasks;
+        private List<Task> currTasks;
+        private string currDirPath;
+
+        int currentIndex = 0;
+        double taskFinished = 0;
         // Stack chứa đường dẫn
         private Stack<string> pathStack = new Stack<string>();
 
@@ -52,6 +59,9 @@ namespace Manage_File_Application
             // Khởi tạo Elastic
             elasticDAO = new ElasticDAO();
 
+            currTasks = new List<Task>();
+            cancelTasks = false;
+            tokenSource = new CancellationTokenSource();
             // Disable nút back, forward
             btnBack.Enabled = false;
             btnForward.Enabled = false;
@@ -282,17 +292,25 @@ namespace Manage_File_Application
                 this.Cursor = Cursors.WaitCursor;
                 numItems.Text = "Items: 0";
                 txtPath.Text = path;
+                currDirPath = path;
                 listView.Items.Clear();
 
                 // lấy danh sách các file trong thư mục path
                 string[] arrFiles = Directory.GetFiles(path);
 
+                //// dừng task trước khi xoá index
+                if (cancelTasks)
+                {
+                    tokenSource.Cancel();
+                    cancelTasks = false;
+                    tokenSource = new CancellationTokenSource();
+                }
 
                 // xoá index trên elastic
                 bool response = await elasticDAO.DeleteAll();
 
+                // List Files
                 elasticFiles = new List<Model.File>();
-
 
                 // Khởi tạo sort col trong listView
                 foreach (string file in arrFiles)
@@ -329,14 +347,8 @@ namespace Manage_File_Application
                     });
                     addFolderToListView(folder);
                 }
-                object lockObject = new object();
-                foreach (Model.File f in elasticFiles)
-                {
-                    lock (lockObject)
-                    {
-                        Task task = Task.Run(() => ReadFileAndAddElastic(f));
-                    }
-                }
+
+                DoTheElasticThings();
 
                 // Đếm số file trong folder hiện tại
                 numItems.Text = "Items: " + (new DirectoryInfo(path).GetDirectories().Length + new DirectoryInfo(path).GetFiles().Length);
@@ -360,6 +372,46 @@ namespace Manage_File_Application
                 MessageBox.Show(ex.Message, ex.Source);
             }
         }
+
+        private void DoTheElasticThings()
+        {
+            currTasks = new List<Task>();
+            currentIndex = 0;
+            taskFinished = 0;
+            object lockObject = new object();
+            foreach (Model.File f in elasticFiles)
+            {
+                cancelTasks = true;
+                lock (lockObject)
+                {
+                    Task task = Task.Run(() => ReadFileAndAddElastic(f), tokenSource.Token).ContinueWith(t =>
+                    {
+                        if (f.Path.Contains(currDirPath))
+                        {
+                            taskFinished += 1;
+                            txtProcess.Invoke((Action)(() =>
+                            {
+                                txtProcess.Text = taskFinished + "/" + elasticFiles.Count;
+                            }));
+                            currentIndex = (int)Math.Floor((taskFinished / elasticFiles.Count) * 100);
+                            if (currentIndex <= 100)
+                            {
+                                elasticHttpSearchProgress.Invoke((Action)(() => elasticHttpSearchProgress.Value = currentIndex));
+                            }
+                            if (currentIndex == 100)
+                            {
+                                txtProcess.Invoke((Action)(() =>
+                                {
+                                    txtProcess.Text = "Ready to search";
+                                }));
+                            }
+                        }
+                    });
+                    currTasks.Add(task);
+                }
+            }
+        }
+
         private void ReadFileAndAddElastic(Model.File f)
         {
                 if (f.Extension.Equals(".docx") || f.Extension.Equals(".doc") ||
@@ -437,8 +489,8 @@ namespace Manage_File_Application
                 lvwColumnSorter.Order = SortOrder.Ascending;
             }
 
-            // Perform the sort with these new sort options.
-            listView.Sort();
+            //Perform the sort with these new sort options.
+           listView.Sort();
         }
 
         // item selected
@@ -628,9 +680,6 @@ namespace Manage_File_Application
                             else // File
                             {
                                 FileInfo file = (FileInfo) item.Tag;
-                                using (File.Create(file.FullName))
-                                {
-                                }
                                 File.Delete(file.FullName);
                             }
                         }
@@ -653,7 +702,6 @@ namespace Manage_File_Application
             if (listView.SelectedItems.Count > 0)
             {
                 listView.SelectedItems[0].BeginEdit();
-                txtSearch.Text = listView.SelectedItems[0].Text;
             }
         }
 
@@ -1072,7 +1120,7 @@ namespace Manage_File_Application
         {
             int selectedIndx = cbChooseSearch.SelectedIndex;
             string keyword = txtSearch.Text;
-            List<Model.File> files = elasticDAO.SearchByField(selectedIndx, keyword);
+            List<Model.File> files = elasticDAO.SearchByField(selectedIndx, keyword, currDirPath);
 
             // Clear list view 
             listView.Items.Clear();
@@ -1083,6 +1131,7 @@ namespace Manage_File_Application
             {
                 if (!f.isFolder)
                 {
+                    if (f.Path.Contains(currDirPath))
                     addFileToListView(f.Path);
                 }
             }
@@ -1092,7 +1141,8 @@ namespace Manage_File_Application
             {
                 if (f.isFolder)
                 {
-                    addFolderToListView(f.Path);
+                    if (f.Path.Contains(currDirPath))
+                        addFolderToListView(f.Path);
                 }
             }
         }
@@ -1164,7 +1214,8 @@ namespace Manage_File_Application
             {
                 text.Append(" " + docs.Paragraphs[i + 1].Range.Text.ToString());
             }
-
+            docs.Close();
+            word.Quit();
             return text.ToString();
         }
         private string GetTextFromText(string path)
@@ -1172,6 +1223,11 @@ namespace Manage_File_Application
             string text = File.ReadAllText(path);
 
             return text.ToString();
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -85,6 +85,10 @@ namespace Manage_File_Application
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.dateTimePicker = new System.Windows.Forms.DateTimePicker();
             this.cbChooseSearch = new System.Windows.Forms.ComboBox();
+            this.elasticHttpSearchProgress = new System.Windows.Forms.ProgressBar();
+            this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.label1 = new System.Windows.Forms.Label();
+            this.txtProcess = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
@@ -95,6 +99,7 @@ namespace Manage_File_Application
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
             // 
             // numItemsSelected
@@ -119,7 +124,7 @@ namespace Manage_File_Application
             this.btnBack.ForeColor = System.Drawing.Color.Black;
             this.btnBack.Image = ((System.Drawing.Image)(resources.GetObject("btnBack.Image")));
             this.btnBack.Location = new System.Drawing.Point(2, 2);
-            this.btnBack.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnBack.Margin = new System.Windows.Forms.Padding(2);
             this.btnBack.Name = "btnBack";
             this.btnBack.Size = new System.Drawing.Size(40, 28);
             this.btnBack.TabIndex = 3;
@@ -134,7 +139,7 @@ namespace Manage_File_Application
             | System.Windows.Forms.AnchorStyles.Left)));
             this.btnGo.Image = ((System.Drawing.Image)(resources.GetObject("btnGo.Image")));
             this.btnGo.Location = new System.Drawing.Point(939, 2);
-            this.btnGo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnGo.Margin = new System.Windows.Forms.Padding(2);
             this.btnGo.Name = "btnGo";
             this.btnGo.Size = new System.Drawing.Size(55, 28);
             this.btnGo.TabIndex = 2;
@@ -148,7 +153,7 @@ namespace Manage_File_Application
             this.btnForward.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnForward.Image = ((System.Drawing.Image)(resources.GetObject("btnForward.Image")));
             this.btnForward.Location = new System.Drawing.Point(47, 2);
-            this.btnForward.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnForward.Margin = new System.Windows.Forms.Padding(2);
             this.btnForward.Name = "btnForward";
             this.btnForward.Size = new System.Drawing.Size(40, 28);
             this.btnForward.TabIndex = 4;
@@ -161,7 +166,7 @@ namespace Manage_File_Application
             this.txtPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtPath.Location = new System.Drawing.Point(92, 4);
-            this.txtPath.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtPath.Margin = new System.Windows.Forms.Padding(2);
             this.txtPath.Name = "txtPath";
             this.txtPath.Size = new System.Drawing.Size(843, 24);
             this.txtPath.TabIndex = 1;
@@ -172,7 +177,7 @@ namespace Manage_File_Application
             this.btnRename.BackColor = System.Drawing.SystemColors.Control;
             this.btnRename.Image = ((System.Drawing.Image)(resources.GetObject("btnRename.Image")));
             this.btnRename.Location = new System.Drawing.Point(320, 4);
-            this.btnRename.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnRename.Margin = new System.Windows.Forms.Padding(2);
             this.btnRename.Name = "btnRename";
             this.btnRename.Size = new System.Drawing.Size(85, 49);
             this.btnRename.TabIndex = 5;
@@ -186,7 +191,7 @@ namespace Manage_File_Application
             this.btnDelete.BackColor = System.Drawing.SystemColors.Control;
             this.btnDelete.Image = ((System.Drawing.Image)(resources.GetObject("btnDelete.Image")));
             this.btnDelete.Location = new System.Drawing.Point(237, 4);
-            this.btnDelete.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnDelete.Margin = new System.Windows.Forms.Padding(2);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(79, 49);
             this.btnDelete.TabIndex = 4;
@@ -209,7 +214,7 @@ namespace Manage_File_Application
             this.tableLayoutPanel1.Controls.Add(this.txtPath, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.btnGo, 3, 0);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(9, 90);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -226,7 +231,7 @@ namespace Manage_File_Application
             // 
             this.btnDetail.Image = ((System.Drawing.Image)(resources.GetObject("btnDetail.Image")));
             this.btnDetail.Location = new System.Drawing.Point(194, 4);
-            this.btnDetail.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnDetail.Margin = new System.Windows.Forms.Padding(2);
             this.btnDetail.Name = "btnDetail";
             this.btnDetail.Size = new System.Drawing.Size(90, 49);
             this.btnDetail.TabIndex = 5;
@@ -239,7 +244,7 @@ namespace Manage_File_Application
             // 
             this.btnTile.Image = ((System.Drawing.Image)(resources.GetObject("btnTile.Image")));
             this.btnTile.Location = new System.Drawing.Point(382, 4);
-            this.btnTile.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnTile.Margin = new System.Windows.Forms.Padding(2);
             this.btnTile.Name = "btnTile";
             this.btnTile.Size = new System.Drawing.Size(90, 49);
             this.btnTile.TabIndex = 4;
@@ -252,7 +257,7 @@ namespace Manage_File_Application
             // 
             this.btnList.Image = ((System.Drawing.Image)(resources.GetObject("btnList.Image")));
             this.btnList.Location = new System.Drawing.Point(288, 4);
-            this.btnList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnList.Margin = new System.Windows.Forms.Padding(2);
             this.btnList.Name = "btnList";
             this.btnList.Size = new System.Drawing.Size(90, 49);
             this.btnList.TabIndex = 3;
@@ -265,7 +270,7 @@ namespace Manage_File_Application
             // 
             this.btnSmallIcon.Image = ((System.Drawing.Image)(resources.GetObject("btnSmallIcon.Image")));
             this.btnSmallIcon.Location = new System.Drawing.Point(99, 4);
-            this.btnSmallIcon.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnSmallIcon.Margin = new System.Windows.Forms.Padding(2);
             this.btnSmallIcon.Name = "btnSmallIcon";
             this.btnSmallIcon.Size = new System.Drawing.Size(90, 49);
             this.btnSmallIcon.TabIndex = 2;
@@ -278,7 +283,7 @@ namespace Manage_File_Application
             // 
             this.btnLargeIcon.Image = ((System.Drawing.Image)(resources.GetObject("btnLargeIcon.Image")));
             this.btnLargeIcon.Location = new System.Drawing.Point(4, 4);
-            this.btnLargeIcon.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnLargeIcon.Margin = new System.Windows.Forms.Padding(2);
             this.btnLargeIcon.Name = "btnLargeIcon";
             this.btnLargeIcon.Size = new System.Drawing.Size(90, 49);
             this.btnLargeIcon.TabIndex = 0;
@@ -294,7 +299,7 @@ namespace Manage_File_Application
             | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer.Location = new System.Drawing.Point(9, 128);
-            this.splitContainer.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.splitContainer.Margin = new System.Windows.Forms.Padding(2);
             this.splitContainer.Name = "splitContainer";
             // 
             // splitContainer.Panel1
@@ -321,7 +326,7 @@ namespace Manage_File_Application
             this.treeFolder.ImageIndex = 0;
             this.treeFolder.ImageList = this.imageTreeFolder;
             this.treeFolder.Location = new System.Drawing.Point(0, 0);
-            this.treeFolder.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.treeFolder.Margin = new System.Windows.Forms.Padding(2);
             this.treeFolder.Name = "treeFolder";
             this.treeFolder.SelectedImageIndex = 0;
             this.treeFolder.ShowLines = false;
@@ -357,9 +362,9 @@ namespace Manage_File_Application
             this.listView.LabelEdit = true;
             this.listView.LargeImageList = this.imageLarge;
             this.listView.Location = new System.Drawing.Point(-5, -1);
-            this.listView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.listView.Margin = new System.Windows.Forms.Padding(2);
             this.listView.Name = "listView";
-            this.listView.Size = new System.Drawing.Size(779, 342);
+            this.listView.Size = new System.Drawing.Size(780, 342);
             this.listView.SmallImageList = this.imageSmall;
             this.listView.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listView.TabIndex = 1;
@@ -518,7 +523,7 @@ namespace Manage_File_Application
             this.btnSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSearch.Image = ((System.Drawing.Image)(resources.GetObject("btnSearch.Image")));
             this.btnSearch.Location = new System.Drawing.Point(918, 2);
-            this.btnSearch.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnSearch.Margin = new System.Windows.Forms.Padding(2);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(69, 51);
             this.btnSearch.TabIndex = 4;
@@ -531,7 +536,7 @@ namespace Manage_File_Application
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtSearch.Location = new System.Drawing.Point(130, 16);
-            this.txtSearch.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtSearch.Margin = new System.Windows.Forms.Padding(2);
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.Size = new System.Drawing.Size(786, 24);
             this.txtSearch.TabIndex = 2;
@@ -559,7 +564,7 @@ namespace Manage_File_Application
             this.tabControl.Controls.Add(this.tabPage2);
             this.tabControl.Controls.Add(this.tabPage3);
             this.tabControl.Location = new System.Drawing.Point(9, 8);
-            this.tabControl.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabControl.Margin = new System.Windows.Forms.Padding(2);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
             this.tabControl.Size = new System.Drawing.Size(997, 81);
@@ -573,9 +578,9 @@ namespace Manage_File_Application
             this.tabPage1.Controls.Add(this.btnSmallIcon);
             this.tabPage1.Controls.Add(this.btnList);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(2);
             this.tabPage1.Size = new System.Drawing.Size(989, 55);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Layout";
@@ -592,9 +597,9 @@ namespace Manage_File_Application
             this.tabPage2.Controls.Add(this.btnRename);
             this.tabPage2.Controls.Add(this.btnDelete);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabPage2.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(2);
             this.tabPage2.Size = new System.Drawing.Size(989, 55);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Function";
@@ -605,7 +610,7 @@ namespace Manage_File_Application
             this.btnOpen.BackColor = System.Drawing.SystemColors.Control;
             this.btnOpen.Image = ((System.Drawing.Image)(resources.GetObject("btnOpen.Image")));
             this.btnOpen.Location = new System.Drawing.Point(616, 4);
-            this.btnOpen.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnOpen.Margin = new System.Windows.Forms.Padding(2);
             this.btnOpen.Name = "btnOpen";
             this.btnOpen.Size = new System.Drawing.Size(76, 49);
             this.btnOpen.TabIndex = 13;
@@ -619,7 +624,7 @@ namespace Manage_File_Application
             this.btnNewFile.BackColor = System.Drawing.SystemColors.Control;
             this.btnNewFile.Image = ((System.Drawing.Image)(resources.GetObject("btnNewFile.Image")));
             this.btnNewFile.Location = new System.Drawing.Point(513, 4);
-            this.btnNewFile.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnNewFile.Margin = new System.Windows.Forms.Padding(2);
             this.btnNewFile.Name = "btnNewFile";
             this.btnNewFile.Size = new System.Drawing.Size(98, 49);
             this.btnNewFile.TabIndex = 12;
@@ -633,7 +638,7 @@ namespace Manage_File_Application
             this.btnNewFolder.BackColor = System.Drawing.SystemColors.Control;
             this.btnNewFolder.Image = ((System.Drawing.Image)(resources.GetObject("btnNewFolder.Image")));
             this.btnNewFolder.Location = new System.Drawing.Point(410, 4);
-            this.btnNewFolder.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnNewFolder.Margin = new System.Windows.Forms.Padding(2);
             this.btnNewFolder.Name = "btnNewFolder";
             this.btnNewFolder.Size = new System.Drawing.Size(99, 49);
             this.btnNewFolder.TabIndex = 11;
@@ -647,7 +652,7 @@ namespace Manage_File_Application
             this.btnCut.BackColor = System.Drawing.SystemColors.Control;
             this.btnCut.Image = ((System.Drawing.Image)(resources.GetObject("btnCut.Image")));
             this.btnCut.Location = new System.Drawing.Point(169, 4);
-            this.btnCut.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnCut.Margin = new System.Windows.Forms.Padding(2);
             this.btnCut.Name = "btnCut";
             this.btnCut.Size = new System.Drawing.Size(64, 49);
             this.btnCut.TabIndex = 8;
@@ -661,7 +666,7 @@ namespace Manage_File_Application
             this.btnPaste.BackColor = System.Drawing.SystemColors.Control;
             this.btnPaste.Image = ((System.Drawing.Image)(resources.GetObject("btnPaste.Image")));
             this.btnPaste.Location = new System.Drawing.Point(88, 4);
-            this.btnPaste.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnPaste.Margin = new System.Windows.Forms.Padding(2);
             this.btnPaste.Name = "btnPaste";
             this.btnPaste.Size = new System.Drawing.Size(76, 49);
             this.btnPaste.TabIndex = 7;
@@ -675,7 +680,7 @@ namespace Manage_File_Application
             this.btnCopy.BackColor = System.Drawing.SystemColors.Control;
             this.btnCopy.Image = ((System.Drawing.Image)(resources.GetObject("btnCopy.Image")));
             this.btnCopy.Location = new System.Drawing.Point(4, 4);
-            this.btnCopy.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnCopy.Margin = new System.Windows.Forms.Padding(2);
             this.btnCopy.Name = "btnCopy";
             this.btnCopy.Size = new System.Drawing.Size(80, 49);
             this.btnCopy.TabIndex = 6;
@@ -691,9 +696,9 @@ namespace Manage_File_Application
             this.tabPage3.Controls.Add(this.btnSearch);
             this.tabPage3.Controls.Add(this.txtSearch);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabPage3.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(2);
             this.tabPage3.Size = new System.Drawing.Size(989, 55);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Search";
@@ -705,7 +710,7 @@ namespace Manage_File_Application
             this.dateTimePicker.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dateTimePicker.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dateTimePicker.Location = new System.Drawing.Point(130, 17);
-            this.dateTimePicker.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.dateTimePicker.Margin = new System.Windows.Forms.Padding(2);
             this.dateTimePicker.Name = "dateTimePicker";
             this.dateTimePicker.Size = new System.Drawing.Size(226, 24);
             this.dateTimePicker.TabIndex = 6;
@@ -719,24 +724,57 @@ namespace Manage_File_Application
             "Content",
             "Date Created"});
             this.cbChooseSearch.Location = new System.Drawing.Point(4, 16);
-            this.cbChooseSearch.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cbChooseSearch.Margin = new System.Windows.Forms.Padding(2);
             this.cbChooseSearch.Name = "cbChooseSearch";
             this.cbChooseSearch.Size = new System.Drawing.Size(122, 25);
             this.cbChooseSearch.TabIndex = 5;
             this.cbChooseSearch.SelectedIndexChanged += new System.EventHandler(this.cbChooseSearch_SelectedIndexChanged);
+            // 
+            // elasticHttpSearchProgress
+            // 
+            this.elasticHttpSearchProgress.Location = new System.Drawing.Point(123, 474);
+            this.elasticHttpSearchProgress.Name = "elasticHttpSearchProgress";
+            this.elasticHttpSearchProgress.Size = new System.Drawing.Size(230, 16);
+            this.elasticHttpSearchProgress.TabIndex = 18;
+            // 
+            // errorProvider1
+            // 
+            this.errorProvider1.ContainerControl = this;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(16, 474);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(101, 13);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Search proccessing";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
+            // 
+            // txtProcess
+            // 
+            this.txtProcess.AutoSize = true;
+            this.txtProcess.Location = new System.Drawing.Point(367, 474);
+            this.txtProcess.Name = "txtProcess";
+            this.txtProcess.Size = new System.Drawing.Size(24, 13);
+            this.txtProcess.TabIndex = 19;
+            this.txtProcess.Text = "0/0";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1014, 493);
+            this.Controls.Add(this.txtProcess);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.elasticHttpSearchProgress);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.numItemsSelected);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.splitContainer);
             this.Controls.Add(this.numItems);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "Manager Files";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -752,6 +790,7 @@ namespace Manage_File_Application
             this.tabPage2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -813,6 +852,10 @@ namespace Manage_File_Application
         private System.Windows.Forms.ToolStripSeparator tsLine3;
         private System.Windows.Forms.ToolStripMenuItem tsNewFile;
         private System.Windows.Forms.ToolStripMenuItem tsNewFolder;
+        private System.Windows.Forms.ProgressBar elasticHttpSearchProgress;
+        private System.Windows.Forms.ErrorProvider errorProvider1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label txtProcess;
     }
 }
 
