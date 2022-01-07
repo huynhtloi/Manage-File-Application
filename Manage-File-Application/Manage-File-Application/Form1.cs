@@ -288,7 +288,7 @@ namespace Manage_File_Application
         {
             try
             {
-                listView.ListViewItemSorter = null;
+                //listView.ListViewItemSorter = null;
                 this.Cursor = Cursors.WaitCursor;
                 numItems.Text = "Items: 0";
                 txtPath.Text = path;
@@ -363,8 +363,8 @@ namespace Manage_File_Application
                 btnOpen.Enabled = false;
 
                 this.Cursor = Cursors.Default;
-                lvwColumnSorter = new ListViewColumnSorter();
-                listView.ListViewItemSorter = lvwColumnSorter;
+                //lvwColumnSorter = new ListViewColumnSorter();
+                //listView.ListViewItemSorter = lvwColumnSorter;
             }
             catch (Exception ex) // Có một số folder không cấp quyền truy cập sẽ lỗi
             {
@@ -526,7 +526,7 @@ namespace Manage_File_Application
         }
 
         // Đổi tên file or folder trong hệ thống sau khi sửa trên listView
-        private void listView_AfterLabelEdit(object sender, LabelEditEventArgs e)
+        private void listView_AfterLabelEditAsync(object sender, LabelEditEventArgs e)
         {
             string path = listView.FocusedItem.SubItems[1].Text;
 
@@ -561,7 +561,19 @@ namespace Manage_File_Application
                     else
                     {
                         Directory.Move(path, newFolderName);
-                        refresh();
+                        DirectoryInfo dirInfo = new DirectoryInfo(newFolderName);
+                        Task task = Task.Run((Action)(() => {
+                            elasticDAO.Delete(path);
+                            elasticDAO.Create(new Model.File()
+                            {
+                                Id = dirInfo.FullName,
+                                Name = dirInfo.Name,
+                                Path = dirInfo.FullName,
+                                isFolder = true,
+                                Extension = "",
+                                DateCreate = dirInfo.CreationTime
+                            });
+                        }));
                     }
                 }
                 else  // file
@@ -579,7 +591,20 @@ namespace Manage_File_Application
                     {
                         // Đổi tên file
                         File.Move(path, newFileName);
-                        refresh();
+                        FileInfo fileInfo = new FileInfo(newFileName);
+                        Task task = Task.Run((Action)(() => {
+                            elasticDAO.Delete(path);
+                            elasticDAO.Create(new Model.File()
+                            {
+                                Id = fileInfo.FullName,
+                                Name = fileInfo.Name,
+                                Path = fileInfo.FullName,
+                                isFolder = false,
+                                Content = ReadContent(fileInfo.Extension, fileInfo.FullName),
+                                Extension = fileInfo.Extension,
+                                DateCreate = fileInfo.CreationTime
+                            });
+                        })) ;
                     }
                 }
             }
@@ -649,10 +674,10 @@ namespace Manage_File_Application
         // Nút xóa file or folder
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            deleteFileOrFolder();
+            deleteFileOrFolderAsync();
         }
 
-        private void deleteFileOrFolder()
+        private async Task deleteFileOrFolderAsync()
         {
             // Chọn file or folder cần xóa
             if (listView.SelectedItems.Count > 0)
@@ -676,18 +701,31 @@ namespace Manage_File_Application
                             {
                                 DirectoryInfo folderdelete = (DirectoryInfo) item.Tag;
                                 Directory.Delete(folderdelete.FullName, true);
+                                if (await elasticDAO.Delete(folderdelete.FullName))
+                                {
+                                    ListViewItem lvItem = listView.SelectedItems[0];
+                                    listView.Items.Remove(lvItem);
+                                }
                             }
                             else // File
                             {
                                 FileInfo file = (FileInfo) item.Tag;
+                                using(File.Create(file.FullName))
+                                {
+
+                                }
                                 File.Delete(file.FullName);
+                                if (await elasticDAO.Delete(file.FullName))
+                                {
+                                    ListViewItem lvItem = listView.SelectedItems[0];
+                                    listView.Items.Remove(lvItem);
+                                }
                             }
                         }
-                        refresh();
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(ex.Message, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Error);
                         Console.WriteLine(ex.StackTrace);
                     }
                 }
@@ -709,35 +747,35 @@ namespace Manage_File_Application
         private void btnLargeIcon_Click(object sender, EventArgs e)
         {
             listView.View = View.LargeIcon;
-            refresh();
+            //refresh();
         }
 
         // View SmallIcon
         private void btnSmallIcon_Click(object sender, EventArgs e)
         {
             listView.View = View.SmallIcon;
-            refresh();
+            //refresh();
         }
 
         // View Details
         private void btnDetail_Click(object sender, EventArgs e)
         {
             listView.View = View.Details;
-            refresh();
+            //refresh();
         }
 
         // View List
         private void btnList_Click(object sender, EventArgs e)
         {
             listView.View = View.List;
-            refresh();
+            //refresh();
         }
 
         // View Tile
         private void btnTile_Click(object sender, EventArgs e)
         {
             listView.View = View.Tile;
-            refresh();
+            //refresh();
         }
 
         private void refresh()
@@ -800,7 +838,7 @@ namespace Manage_File_Application
 
         private void tsDelete_Click(object sender, EventArgs e)
         {
-            deleteFileOrFolder();
+            deleteFileOrFolderAsync();
         }
 
         private void tsRename_Click(object sender, EventArgs e)
@@ -943,12 +981,14 @@ namespace Manage_File_Application
                         DirectoryInfo folderpaste = (DirectoryInfo)tmp;
                         // Dùng hàm CopyorCutFolder() để paste ra folder copy
                         pasteFolderCopyOrCut(folderpaste.FullName, false);
+                        DoTheElasticThings();
                     }
                     else // file
                     {
                         FileInfo file = (FileInfo)tmp;
                         // Dùng hàm pasteFileCopyOrCut() để paste ra file
                         pasteFileCopyOrCut(file.FullName, false);
+                        DoTheElasticThings();
                     }
                 }
             }
@@ -956,7 +996,6 @@ namespace Manage_File_Application
             {
                 MessageBox.Show("No files/folders have been copied or cut out yet!");
             }
-            refresh();
         }
 
         private void pasteFolderCopyOrCut(string path, bool isCopy)
@@ -975,8 +1014,18 @@ namespace Manage_File_Application
                 else
                 {
                     folder.MoveTo(destinationPath);
-                    btnPaste.Enabled = false;
                 }
+                elasticFiles.Add(new Model.File()
+                {
+                    Id = folder.FullName,
+                    Name = folder.Name,
+                    Path = folder.FullName,
+                    isFolder = true,
+                    Extension = folder.Extension,
+                    DateCreate = folder.CreationTime
+                });
+                addFolderToListView(folder.FullName);
+                btnPaste.Enabled = false;
             }
             catch (Exception e)
             {
@@ -1020,9 +1069,19 @@ namespace Manage_File_Application
                 }
                 else
                 {
-                    file.MoveTo(newDestinationPath);
-                    btnPaste.Enabled = false;
+                    file.MoveTo(destinationPath);
                 }
+                elasticFiles.Add(new Model.File()
+                {
+                    Id = file.FullName,
+                    Name = file.Name,
+                    Path = file.FullName,
+                    isFolder = false,
+                    Extension = file.Extension,
+                    DateCreate = file.CreationTime
+                });
+                addFileToListView(file.FullName);
+                btnPaste.Enabled = false;
             }
             catch (Exception e)
             {
@@ -1055,7 +1114,19 @@ namespace Manage_File_Application
             }
 
             Directory.CreateDirectory(newFolderPath);
-            refresh();
+            DirectoryInfo directoryInfo = new DirectoryInfo(newFolderPath);
+            if (elasticDAO.Create(new Model.File()
+            {
+                Id = directoryInfo.FullName,
+                Name = directoryInfo.Name,
+                Path = newFolderPath,
+                isFolder = true,
+                Extension = directoryInfo.Extension,
+                DateCreate = directoryInfo.CreationTime
+            }))
+            {
+                addFolderToListView(newFolderPath);
+            }
         }
 
         private void btnNewFile_Click(object sender, EventArgs e)
@@ -1087,8 +1158,19 @@ namespace Manage_File_Application
 
             // làm mới và update lại danh sách file
             File.Create(newFilePath).Close();
-
-            refresh();
+            FileInfo fileInfo = new FileInfo(newFilePath);
+            if (elasticDAO.Create(new Model.File()
+            {
+                Id = fileInfo.FullName,
+                Name = fileInfo.Name,
+                Path = newFilePath,
+                isFolder = false,
+                Extension = fileInfo.Extension,
+                DateCreate = fileInfo.CreationTime
+            }))
+            {
+                addFileToListView(newFilePath);
+            }
         }
 
         private void btnOpen_Click(object sender, EventArgs e)

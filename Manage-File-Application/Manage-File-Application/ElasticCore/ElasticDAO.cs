@@ -38,7 +38,7 @@ namespace Manage_File_Application.ElasticCore
                                     .Query(qry => qry
                                         .QueryString(qryStr => qryStr
                                         .DefaultField(df => df.Content)
-                                        .Query(query)))).Result.Documents.ToList();
+                                        .Query("*" + query + "*")))).Result.Documents.ToList();
                     return response;
             }
 
@@ -59,7 +59,7 @@ namespace Manage_File_Application.ElasticCore
         public bool Create(File file)
         {
             var response = connect.client.Index<File>(file, i => i
-                        .Index("manager_files")
+                       .Index("manager_files")
                        .Id(file.Id)
                        .Refresh(Elasticsearch.Net.Refresh.True));
             return CheckResponse(response);
@@ -89,7 +89,6 @@ namespace Manage_File_Application.ElasticCore
                        .Index("manager_files")
                        .Doc(file)
                        .Refresh(Elasticsearch.Net.Refresh.True));
-            var abc = 2;
             return CheckResponse(response);
         }
 

@@ -364,13 +364,13 @@ namespace Manage_File_Application
             this.listView.Location = new System.Drawing.Point(-5, -1);
             this.listView.Margin = new System.Windows.Forms.Padding(2);
             this.listView.Name = "listView";
-            this.listView.Size = new System.Drawing.Size(780, 342);
+            this.listView.Size = new System.Drawing.Size(781, 342);
             this.listView.SmallImageList = this.imageSmall;
             this.listView.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listView.TabIndex = 1;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
-            this.listView.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.listView_AfterLabelEdit);
+            this.listView.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.listView_AfterLabelEditAsync);
             this.listView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView_ColumnClick);
             this.listView.ItemActivate += new System.EventHandler(this.listView_ItemActivate);
             this.listView.SelectedIndexChanged += new System.EventHandler(this.listView_SelectedIndexChanged);
