@@ -21,7 +21,6 @@ namespace Manage_File_Application
     public partial class Form1 : Form
     {
         private ElasticDAO elasticDAO;
-        private ListViewColumnSorter lvwColumnSorter;
         private List<Model.File> elasticFiles;
         private CancellationTokenSource tokenSource;
         private bool cancelTasks;
@@ -78,7 +77,17 @@ namespace Manage_File_Application
             toolTip.SetToolTip(btnTile, "Display items with title view");
             toolTip.SetToolTip(btnDelete, "Delete selected item");
             toolTip.SetToolTip(btnRename, "Rename selected item name");
-            toolTip.SetToolTip(btnGo, "Open file by path");
+            toolTip.SetToolTip(btnGo, "Open with path");
+            toolTip.SetToolTip(btnSearch, "Search");
+            toolTip.SetToolTip(btnShorcutKey, "Shorcut Key");
+            toolTip.SetToolTip(btnCopy, "Copy (Ctrl + C)");
+            toolTip.SetToolTip(btnCut, "Cut (Ctrl + X)");
+            toolTip.SetToolTip(btnPaste, "Paste (Ctrl + V)");
+            toolTip.SetToolTip(btnDelete, "Delete (Ctrl + D | Delete)");
+            toolTip.SetToolTip(btnRename, "Rename (F2)");
+            toolTip.SetToolTip(btnNewFile, "New File");
+            toolTip.SetToolTip(btnNewFolder, "New Folder (Ctrl + Shift + N)");
+            toolTip.SetToolTip(btnOpen, "Open file");
 
             // Set default cho cbChooseSearch
             cbChooseSearch.SelectedIndex = 0;
@@ -366,8 +375,6 @@ namespace Manage_File_Application
                 btnOpen.Enabled = false;
 
                 this.Cursor = Cursors.Default;
-                //lvwColumnSorter = new ListViewColumnSorter();
-                //listView.ListViewItemSorter = lvwColumnSorter;
             }
             catch (Exception ex) // Có một số folder không cấp quyền truy cập sẽ lỗi
             {
@@ -467,35 +474,6 @@ namespace Manage_File_Application
             }
         }
 
-        // Sorting theo column trên listview
-        // Tham khảo Code
-        // Chưa sort được size file
-        private void listView_ColumnClick(object sender, ColumnClickEventArgs e)
-        {
-            // Determine if clicked column is already the column that is being sorted.
-            if (e.Column == lvwColumnSorter.SortColumn)
-            {
-                // Reverse the current sort direction for this column.
-                if (lvwColumnSorter.Order == SortOrder.Ascending)
-                {
-                    lvwColumnSorter.Order = SortOrder.Descending;
-                }
-                else
-                {
-                    lvwColumnSorter.Order = SortOrder.Ascending;
-                }
-            }
-            else
-            {
-                // Set the column number that is to be sorted; default to ascending.
-                lvwColumnSorter.SortColumn = e.Column;
-                lvwColumnSorter.Order = SortOrder.Ascending;
-            }
-
-            //Perform the sort with these new sort options.
-            //listView.Sort();
-        }
-
         // item selected
         private void listView_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -522,9 +500,51 @@ namespace Manage_File_Application
         // Bấm F2 để Rename File
         private void listView_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyData == Keys.F2 && listView.SelectedItems.Count > 0)
+            if (listView.SelectedItems.Count > 0)
             {
-                listView.SelectedItems[0].BeginEdit();
+                if (e.KeyCode == Keys.F2)
+                {
+                    listView.SelectedItems[0].BeginEdit();
+                }
+                else if (e.Control && e.KeyCode == Keys.C)
+                {
+                    copyFileOrFolder();
+                }
+                else if (e.Control && e.KeyCode == Keys.X)
+                {
+                    cutFileOrFolder();
+                }
+                else if (e.KeyCode == Keys.Delete || e.Control && e.KeyCode == Keys.D)
+                {
+                    deleteFileOrFolderAsync();
+                }
+                else if (e.Control && e.KeyCode == Keys.V)
+                {
+                    checkPaste();
+                }
+                else if (e.KeyCode == Keys.F5)
+                {
+                    refresh();
+                }
+                else if (e.Control && e.Shift && e.KeyCode == Keys.V)
+                {
+                    newFolder();
+                }
+            }
+            else 
+            {
+                if (e.Control && e.KeyCode == Keys.V)
+                {
+                    checkPaste();
+                }
+                else if (e.KeyCode == Keys.F5)
+                {
+                    refresh();
+                }
+                else if (e.Control &&  e.Shift && e.KeyCode == Keys.V)
+                {
+                    newFolder();
+                }
             }
         }
 
@@ -856,17 +876,17 @@ namespace Manage_File_Application
 
         private void btnCopy_Click(object sender, EventArgs e)
         {
-            copyFile();
+            copyFileOrFolder();
         }
 
         private void tsCopy_Click(object sender, EventArgs e)
         {
-            copyFile();
+            copyFileOrFolder();
         }
 
         private int numFilePaste = 0;
 
-        private void copyFile()
+        private void copyFileOrFolder()
         {
             // Nếu chưa chọn file or folder để copy
             if (listView.SelectedItems.Count < 1)
@@ -900,15 +920,15 @@ namespace Manage_File_Application
 
         private void btnCut_Click(object sender, EventArgs e)
         {
-            cutFile();
+            cutFileOrFolder();
         }
 
         private void tsCut_Click(object sender, EventArgs e)
         {
-            cutFile();
+            cutFileOrFolder();
         }
 
-        private void cutFile()
+        private void cutFileOrFolder()
         {
             // Nếu chưa chọn folder hoặc file để cut
             if (listView.SelectedItems.Count < 1)
@@ -1196,25 +1216,6 @@ namespace Manage_File_Application
             openFileOrFolder();
         }
 
-        private void cbChooseSearch_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            string selectedItem = this.cbChooseSearch.SelectedItem.ToString();
-            if (selectedItem == "Name")
-            {
-                txtSearch.Visible = true;
-                dateTimePicker.Visible = false;
-            }
-            else if (selectedItem == "Content")
-            {
-                txtSearch.Visible = true;
-                dateTimePicker.Visible = false;
-            }
-            else if (selectedItem == "Date Created")
-            {
-                txtSearch.Visible = false;
-                dateTimePicker.Visible = true;
-            }
-        }
         private void btnSearch_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(currDirPath))
@@ -1331,9 +1332,18 @@ namespace Manage_File_Application
             return text.ToString();
         }
 
-        private void label1_Click(object sender, EventArgs e)
+        private void btnShorcutKey_Click(object sender, EventArgs e)
         {
-
+            DialogResult d = MessageBox.Show("Copy \t\t Ctrl + C \n" +
+                "Cut \t\t Ctrl + X \n" +
+                "Paste \t\t Ctrl + V \n" +
+                "Delete \t\t Ctrl + D | Delete \n" +
+                "New Folder \t Ctrl + Shift + N\n" +
+                "Rename \t\t F2 \n" +
+                "Refresh \t\t F5",
+                "Shortcut Key",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
         }
     }
 }
