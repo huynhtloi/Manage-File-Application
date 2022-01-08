@@ -30,8 +30,8 @@ namespace Manage_File_Application.DAL
                 .PrettyJson()
                 .RequestTimeout(TimeSpan.FromMinutes(2));
 
-
             client = new ElasticClient(settings);
+            
         }
     }
 }

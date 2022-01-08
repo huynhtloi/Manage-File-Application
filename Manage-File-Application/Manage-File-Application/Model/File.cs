@@ -10,25 +10,20 @@ namespace Manage_File_Application.Model
     [ElasticsearchType(RelationName = "file_info")]
     class File
     {
-        [Text(Name = "id")]
         public string Id { get; set; }
 
-        [Text(Name = "path")]
         public string Path { get; set; }
 
-        [Text(Name = "is_folder")]
         public bool isFolder { get; set; }
 
-        [Text(Name = "name_file")]
         public string Name { get; set; }
 
-        [Text(Name = "content")]
+        [Keyword]
         public string Content { get; set; }
 
         [Date(Format = "MMddyyyy")]
         public DateTime DateCreate { get; set; }
 
-        [Text(Name = "extension")]
         public string Extension { get; set; }
     }
 }

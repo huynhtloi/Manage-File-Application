@@ -17,10 +17,16 @@ namespace Manage_File_Application.ElasticCore
             connect = new ConnectionToES();
         }
 
-        public List<File> SearchByField(int field, string query, string index)
+        public List<File> SearchByField(int field, string query)
         {
             List<File> response = null;
-
+            if (query.Equals("Enter some text here"))
+            {
+                response = connect.client.SearchAsync<File>(ele => ele
+                                    .Index("manager_files")
+                                    ).Result.Documents.ToList();
+                return response;
+            }
             switch (field)
             {
                 case 0:
@@ -36,12 +42,13 @@ namespace Manage_File_Application.ElasticCore
                     response = connect.client.SearchAsync<File>(ele => ele
                                     .Index("manager_files")
                                     .Query(qry => qry
-                                        .QueryString(qryStr => qryStr
-                                        .DefaultField(df => df.Content)
-                                        .Query("*" + query + "*")))).Result.Documents.ToList();
+                                        .MatchPhrase(m=>m
+                                            .Field(p => p.Content)
+                                            .Query("*" + query + "*"))))
+                                            .Result.Documents.ToList();
                     return response;
             }
-
+            
             return null;
         }
 
@@ -65,14 +72,6 @@ namespace Manage_File_Application.ElasticCore
             return CheckResponse(response);
         }
 
-        public async Task<bool> Rename(string id, string newName)
-        {
-            var response = await connect.client.UpdateAsync<File>(id, i => i
-                       .Index("manager_files")
-                       .Doc(new File() { Name = newName })
-                       .Refresh(Elasticsearch.Net.Refresh.True));
-            return CheckResponse(response);
-        }
         //
         public async Task<bool> Delete(string id)
         {
@@ -80,33 +79,6 @@ namespace Manage_File_Application.ElasticCore
                 .Index("manager_files")
                 .Refresh(Elasticsearch.Net.Refresh.True));
             return CheckResponse(response);
-        }
-
-        //update
-        public async Task<bool> Edit(string id, File file)
-        {
-            var response = await connect.client.UpdateAsync<File>(file, i => i
-                       .Index("manager_files")
-                       .Doc(file)
-                       .Refresh(Elasticsearch.Net.Refresh.True));
-            return CheckResponse(response);
-        }
-
-        //search all
-        public async Task<Nest.ISearchResponse<File>> Find(string SearchString)
-        {
-            var response = await connect.client.SearchAsync<File>(e => e
-                .Index("manager_files")
-                //.Size(1)
-                .Query(q => q
-                    .Match(m => m
-                        .Field(f => f.Name)
-                        .Query(SearchString)
-                    )
-                )
-            );
-
-            return response;
         }
 
         public async Task<bool> DeleteAll()

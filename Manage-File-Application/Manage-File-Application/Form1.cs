@@ -28,8 +28,8 @@ namespace Manage_File_Application
         private List<Task> currTasks;
         private string currDirPath;
 
-        int currentIndex = 0;
-        double taskFinished = 0;
+        //int currentIndex = 0;
+        //double taskFinished = 0;
         // Stack chứa đường dẫn
         private Stack<string> pathStack = new Stack<string>();
 
@@ -288,7 +288,10 @@ namespace Manage_File_Application
         {
             try
             {
-                //listView.ListViewItemSorter = null;
+                elasticHttpSearchProgress.Value = 0;
+                txtProcess.Text = 0 + "/" + 0;
+
+                listView.ListViewItemSorter = null;
                 this.Cursor = Cursors.WaitCursor;
                 numItems.Text = "Items: 0";
                 txtPath.Text = path;
@@ -318,16 +321,16 @@ namespace Manage_File_Application
                     FileInfo fileInfo = new FileInfo(file);
                     // duyệt qua các file có nội dung là text
                     
-                        elasticFiles.Add(new Model.File()
-                        {
-                            Id = fileInfo.FullName,
-                            Name = fileInfo.Name,
-                            Path = file,
-                            isFolder = false,
-                            Extension = fileInfo.Extension,
-                            DateCreate = fileInfo.CreationTime
-                        });
-                        addFileToListView(file);
+                    elasticFiles.Add(new Model.File()
+                    {
+                        Id = fileInfo.FullName,
+                        Name = fileInfo.Name,
+                        Path = file,
+                        isFolder = false,
+                        Extension = fileInfo.Extension,
+                        DateCreate = fileInfo.CreationTime
+                    });
+                    addFileToListView(file);
                 }
 
                 // lấy danh sách các folder trong thư mục path
@@ -376,8 +379,8 @@ namespace Manage_File_Application
         private void DoTheElasticThings()
         {
             currTasks = new List<Task>();
-            currentIndex = 0;
-            taskFinished = 0;
+            int currentIndex = 0;
+            double taskFinished = 0;
             object lockObject = new object();
             foreach (Model.File f in elasticFiles)
             {
@@ -414,10 +417,10 @@ namespace Manage_File_Application
 
         private void ReadFileAndAddElastic(Model.File f)
         {
-                if (f.Extension.Equals(".docx") || f.Extension.Equals(".doc") ||
-                    f.Extension.Equals(".pdf") || f.Extension.Equals(".txt"))
-                    f.Content = ReadContent(f.Extension, f.Path);
-                elasticDAO.Create(f);
+            if (f.Extension.Equals(".docx") || f.Extension.Equals(".doc") ||
+                f.Extension.Equals(".pdf") || f.Extension.Equals(".txt"))
+                f.Content = ReadContent(f.Extension, f.Path);
+            elasticDAO.Create(f);
         }
 
         // Scan file in folder in txtPath
@@ -490,7 +493,7 @@ namespace Manage_File_Application
             }
 
             //Perform the sort with these new sort options.
-           listView.Sort();
+           //listView.Sort();
         }
 
         // item selected
@@ -1101,31 +1104,37 @@ namespace Manage_File_Application
 
         private void newFolder()
         {
-            // Tạo ra Folder với tên mặc định là New Folder
-            DirectoryInfo curDirectory = new DirectoryInfo(txtPath.Text);
-            string path = System.IO.Path.Combine(curDirectory.FullName, "New Folder");
-            string newFolderPath = path;
-            int numFolder = 1;
+            try
+            {
+                // Tạo ra Folder với tên mặc định là New Folder
+                DirectoryInfo curDirectory = new DirectoryInfo(txtPath.Text);
+                string path = System.IO.Path.Combine(curDirectory.FullName, "New Folder");
+                string newFolderPath = path;
+                int numFolder = 1;
 
-            while (Directory.Exists(newFolderPath))
-            {
-                newFolderPath = path + " (" + numFolder + ")";
-                numFolder++;
-            }
+                while (Directory.Exists(newFolderPath))
+                {
+                    newFolderPath = path + " (" + numFolder + ")";
+                    numFolder++;
+                }
 
-            Directory.CreateDirectory(newFolderPath);
-            DirectoryInfo directoryInfo = new DirectoryInfo(newFolderPath);
-            if (elasticDAO.Create(new Model.File()
+                Directory.CreateDirectory(newFolderPath);
+                DirectoryInfo directoryInfo = new DirectoryInfo(newFolderPath);
+                if (elasticDAO.Create(new Model.File()
+                {
+                    Id = directoryInfo.FullName,
+                    Name = directoryInfo.Name,
+                    Path = newFolderPath,
+                    isFolder = true,
+                    Extension = directoryInfo.Extension,
+                    DateCreate = directoryInfo.CreationTime
+                }))
+                {
+                    addFolderToListView(newFolderPath);
+                }
+            }catch(Exception ex)
             {
-                Id = directoryInfo.FullName,
-                Name = directoryInfo.Name,
-                Path = newFolderPath,
-                isFolder = true,
-                Extension = directoryInfo.Extension,
-                DateCreate = directoryInfo.CreationTime
-            }))
-            {
-                addFolderToListView(newFolderPath);
+                MessageBox.Show(ex.Message, ex.Source);
             }
         }
 
@@ -1141,36 +1150,44 @@ namespace Manage_File_Application
 
         private void newFile()
         {
-            // Tạo ra file txt với tên mặc định là New Text Document 
-            DirectoryInfo curDirectory = new DirectoryInfo(txtPath.Text);
-            string defaultFile = "New Text Document.txt";
-            string path = System.IO.Path.Combine(curDirectory.FullName, defaultFile);
-            string newFilePath = path;
-
-            int numFile = 1;
-
-            while (File.Exists(newFilePath))
+            try
             {
-                var tmp = System.IO.Path.GetFileNameWithoutExtension(defaultFile) + " (" + numFile + ").txt";
-                newFilePath = System.IO.Path.Combine(curDirectory.FullName, tmp);
-                numFile++;
+                // Tạo ra file txt với tên mặc định là New Text Document 
+                DirectoryInfo curDirectory = new DirectoryInfo(txtPath.Text);
+                string defaultFile = "New Text Document.txt";
+                string path = System.IO.Path.Combine(curDirectory.FullName, defaultFile);
+                string newFilePath = path;
+
+                int numFile = 1;
+
+                while (File.Exists(newFilePath))
+                {
+                    var tmp = System.IO.Path.GetFileNameWithoutExtension(defaultFile) + " (" + numFile + ").txt";
+                    newFilePath = System.IO.Path.Combine(curDirectory.FullName, tmp);
+                    numFile++;
+                }
+
+                // làm mới và update lại danh sách file
+                File.Create(newFilePath).Close();
+                FileInfo fileInfo = new FileInfo(newFilePath);
+                if (elasticDAO.Create(new Model.File()
+                {
+                    Id = fileInfo.FullName,
+                    Name = fileInfo.Name,
+                    Path = newFilePath,
+                    isFolder = false,
+                    Extension = fileInfo.Extension,
+                    DateCreate = fileInfo.CreationTime
+                }))
+                {
+                    addFileToListView(newFilePath);
+                }
             }
-
-            // làm mới và update lại danh sách file
-            File.Create(newFilePath).Close();
-            FileInfo fileInfo = new FileInfo(newFilePath);
-            if (elasticDAO.Create(new Model.File()
+            catch (Exception ex)
             {
-                Id = fileInfo.FullName,
-                Name = fileInfo.Name,
-                Path = newFilePath,
-                isFolder = false,
-                Extension = fileInfo.Extension,
-                DateCreate = fileInfo.CreationTime
-            }))
-            {
-                addFileToListView(newFilePath);
+                MessageBox.Show(ex.Message, ex.Source);
             }
+            
         }
 
         private void btnOpen_Click(object sender, EventArgs e)
@@ -1197,17 +1214,15 @@ namespace Manage_File_Application
                 dateTimePicker.Visible = true;
             }
         }
-
         private void btnSearch_Click(object sender, EventArgs e)
         {
             int selectedIndx = cbChooseSearch.SelectedIndex;
             string keyword = txtSearch.Text;
-            List<Model.File> files = elasticDAO.SearchByField(selectedIndx, keyword, currDirPath);
 
+            List<Model.File> files = elasticDAO.SearchByField(selectedIndx, keyword);
             // Clear list view 
             listView.Items.Clear();
             listView.Refresh();
-
             // Thêm file vao list
             foreach (Model.File f in files)
             {
