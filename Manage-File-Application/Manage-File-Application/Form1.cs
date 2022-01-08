@@ -163,10 +163,10 @@ namespace Manage_File_Application
             openFolder(new DirectoryInfo(e.Node.FullPath).FullName);
         }
 
-        private  void openFolder(string fullPath)
+        private void openFolder(string fullPath)
         {
             // Scan file trong folder được chọn trong cây thư mục
-             scanFileAsync(fullPath);
+            scanFileAsync(fullPath);
 
             // Push đường dẫn folder vào stack để navigation
             pathStack.Push(fullPath);
@@ -320,7 +320,7 @@ namespace Manage_File_Application
                 {
                     FileInfo fileInfo = new FileInfo(file);
                     // duyệt qua các file có nội dung là text
-                    
+
                     elasticFiles.Add(new Model.File()
                     {
                         Id = fileInfo.FullName,
@@ -444,7 +444,7 @@ namespace Manage_File_Application
             openFileOrFolder();
         }
 
-        private void openFileOrFolder() 
+        private void openFileOrFolder()
         {
             try
             {
@@ -457,7 +457,7 @@ namespace Manage_File_Application
                 }
                 else // File
                 {
-                    Process.Start(listView.FocusedItem.SubItems[1].Text);   
+                    Process.Start(listView.FocusedItem.SubItems[1].Text);
                 }
             }
             catch
@@ -493,7 +493,7 @@ namespace Manage_File_Application
             }
 
             //Perform the sort with these new sort options.
-           //listView.Sort();
+            //listView.Sort();
         }
 
         // item selected
@@ -516,7 +516,7 @@ namespace Manage_File_Application
                 btnRename.Enabled = true;
                 btnOpen.Enabled = true;
             }
-            
+
         }
 
         // Bấm F2 để Rename File
@@ -548,7 +548,7 @@ namespace Manage_File_Application
                 MessageBox.Show(@"A file/folder name can't contain any of the following characters: \ / : * ? '' < > |", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 e.CancelEdit = true;
             }
-            else 
+            else
             {
                 // folder
                 if (item.Tag.GetType() == typeof(DirectoryInfo))
@@ -607,7 +607,7 @@ namespace Manage_File_Application
                                 Extension = fileInfo.Extension,
                                 DateCreate = fileInfo.CreationTime
                             });
-                        })) ;
+                        }));
                     }
                 }
             }
@@ -702,7 +702,7 @@ namespace Manage_File_Application
                             // Folder
                             if (item.Tag.GetType() == typeof(DirectoryInfo))
                             {
-                                DirectoryInfo folderdelete = (DirectoryInfo) item.Tag;
+                                DirectoryInfo folderdelete = (DirectoryInfo)item.Tag;
                                 Directory.Delete(folderdelete.FullName, true);
                                 if (await elasticDAO.Delete(folderdelete.FullName))
                                 {
@@ -712,8 +712,8 @@ namespace Manage_File_Application
                             }
                             else // File
                             {
-                                FileInfo file = (FileInfo) item.Tag;
-                                using(File.Create(file.FullName))
+                                FileInfo file = (FileInfo)item.Tag;
+                                using (File.Create(file.FullName))
                                 {
 
                                 }
@@ -1132,7 +1132,8 @@ namespace Manage_File_Application
                 {
                     addFolderToListView(newFolderPath);
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, ex.Source);
             }
@@ -1187,7 +1188,7 @@ namespace Manage_File_Application
             {
                 MessageBox.Show(ex.Message, ex.Source);
             }
-            
+
         }
 
         private void btnOpen_Click(object sender, EventArgs e)
@@ -1216,30 +1217,37 @@ namespace Manage_File_Application
         }
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            int selectedIndx = cbChooseSearch.SelectedIndex;
-            string keyword = txtSearch.Text;
-
-            List<Model.File> files = elasticDAO.SearchByField(selectedIndx, keyword);
-            // Clear list view 
-            listView.Items.Clear();
-            listView.Refresh();
-            // Thêm file vao list
-            foreach (Model.File f in files)
+            if (string.IsNullOrEmpty(currDirPath))
             {
-                if (!f.isFolder)
-                {
-                    if (f.Path.Contains(currDirPath))
-                    addFileToListView(f.Path);
-                }
+                MessageBox.Show("Please click a folder to be enable to search", "Unable to search");
             }
-
-            // Thêm folder vào list
-            foreach (Model.File f in files)
+            else
             {
-                if (f.isFolder)
+                int selectedIndx = cbChooseSearch.SelectedIndex;
+                string keyword = txtSearch.Text;
+
+                List<Model.File> files = elasticDAO.SearchByField(selectedIndx, keyword);
+                // Clear list view 
+                listView.Items.Clear();
+                listView.Refresh();
+                // Thêm file vao list
+                foreach (Model.File f in files)
                 {
-                    if (f.Path.Contains(currDirPath))
-                        addFolderToListView(f.Path);
+                    if (!f.isFolder)
+                    {
+                        if (f.Path.Contains(currDirPath))
+                            addFileToListView(f.Path);
+                    }
+                }
+
+                // Thêm folder vào list
+                foreach (Model.File f in files)
+                {
+                    if (f.isFolder)
+                    {
+                        if (f.Path.Contains(currDirPath))
+                            addFolderToListView(f.Path);
+                    }
                 }
             }
         }
@@ -1278,7 +1286,8 @@ namespace Manage_File_Application
                 {
                     return GetTextFromText(path);
                 }
-            } catch
+            }
+            catch
             {
                 return "";
             }
