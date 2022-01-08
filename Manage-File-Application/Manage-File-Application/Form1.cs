@@ -383,6 +383,58 @@ namespace Manage_File_Application
             }
         }
 
+        private void scanFiles(string path)
+        {
+            try
+            {
+                listView.ListViewItemSorter = null;
+                this.Cursor = Cursors.WaitCursor;
+                numItems.Text = "Items: 0";
+                txtPath.Text = path;
+                currDirPath = path;
+                listView.Items.Clear();
+
+                // lấy danh sách các file trong thư mục path
+                string[] arrFiles = Directory.GetFiles(path);
+
+                // Khởi tạo sort col trong listView
+                foreach (string file in arrFiles)
+                {
+                    FileInfo fileInfo = new FileInfo(file);
+                    // duyệt qua các file có nội dung là text
+
+                    addFileToListView(file);
+                }
+
+                // lấy danh sách các folder trong thư mục path
+                string[] arrFolders = Directory.GetDirectories(path);
+
+                foreach (string folder in arrFolders)
+                {
+                    addFolderToListView(folder);
+                }
+
+                // Đếm số file trong folder hiện tại
+                numItems.Text = "Items: " + (new DirectoryInfo(path).GetDirectories().Length + new DirectoryInfo(path).GetFiles().Length);
+
+                numItemsSelected.Text = listView.SelectedIndices.Count.ToString() + " items selected";
+
+                // btn disable
+                btnCopy.Enabled = false;
+                btnCut.Enabled = false;
+                btnDelete.Enabled = false;
+                btnRename.Enabled = false;
+                btnOpen.Enabled = false;
+
+                this.Cursor = Cursors.Default;
+            }
+            catch (Exception ex) // Có một số folder không cấp quyền truy cập sẽ lỗi
+            {
+                this.Cursor = Cursors.Default;
+                MessageBox.Show(ex.Message, ex.Source);
+            }
+        }
+
         private void DoTheElasticThings()
         {
             currTasks = new List<Task>();
@@ -526,7 +578,7 @@ namespace Manage_File_Application
                 {
                     refresh();
                 }
-                else if (e.Control && e.Shift && e.KeyCode == Keys.V)
+                else if (e.Control && e.Shift && e.KeyCode == Keys.N)
                 {
                     newFolder();
                 }
@@ -541,7 +593,7 @@ namespace Manage_File_Application
                 {
                     refresh();
                 }
-                else if (e.Control &&  e.Shift && e.KeyCode == Keys.V)
+                else if (e.Control &&  e.Shift && e.KeyCode == Keys.N)
                 {
                     newFolder();
                 }
@@ -597,6 +649,7 @@ namespace Manage_File_Application
                                 DateCreate = dirInfo.CreationTime
                             });
                         }));
+                        refresh();
                     }
                 }
                 else  // file
@@ -628,6 +681,7 @@ namespace Manage_File_Application
                                 DateCreate = fileInfo.CreationTime
                             });
                         }));
+                        refresh();
                     }
                 }
             }
@@ -727,7 +781,7 @@ namespace Manage_File_Application
                                 if (await elasticDAO.Delete(folderdelete.FullName))
                                 {
                                     ListViewItem lvItem = listView.SelectedItems[0];
-                                    listView.Items.Remove(lvItem);
+                                    refresh();
                                 }
                             }
                             else // File
@@ -741,7 +795,7 @@ namespace Manage_File_Application
                                 if (await elasticDAO.Delete(file.FullName))
                                 {
                                     ListViewItem lvItem = listView.SelectedItems[0];
-                                    listView.Items.Remove(lvItem);
+                                    refresh();
                                 }
                             }
                         }
@@ -770,42 +824,49 @@ namespace Manage_File_Application
         private void btnLargeIcon_Click(object sender, EventArgs e)
         {
             listView.View = View.LargeIcon;
-            //refresh();
+            refresh();
         }
 
         // View SmallIcon
         private void btnSmallIcon_Click(object sender, EventArgs e)
         {
             listView.View = View.SmallIcon;
-            //refresh();
+            refresh();
         }
 
         // View Details
         private void btnDetail_Click(object sender, EventArgs e)
         {
             listView.View = View.Details;
-            //refresh();
+            refresh();
         }
 
         // View List
         private void btnList_Click(object sender, EventArgs e)
         {
             listView.View = View.List;
-            //refresh();
+            refresh();
         }
 
         // View Tile
         private void btnTile_Click(object sender, EventArgs e)
         {
             listView.View = View.Tile;
-            //refresh();
+            refresh();
+        }
+
+        private void refreshWithElastic()
+        {
+            string path = txtPath.Text;
+            if (path != String.Empty)
+                scanFileAsync(path);
         }
 
         private void refresh()
         {
             string path = txtPath.Text;
             if (path != String.Empty)
-                scanFileAsync(path);
+                scanFiles(path);
         }
 
         // Context Menu
@@ -843,7 +904,7 @@ namespace Manage_File_Application
                 tsOpen.Visible = true;
                 tsDelete.Visible = true;
                 tsRename.Visible = true;
-                tsRefresh.Visible = false;
+                tsRefresh.Visible = true;
                 tsCopy.Visible = true;
                 tsCut.Visible = true;
                 tsPaste.Visible = false;
@@ -871,7 +932,7 @@ namespace Manage_File_Application
 
         private void tsRefresh_Click(object sender, EventArgs e)
         {
-            refresh();
+            refreshWithElastic();
         }
 
         private void btnCopy_Click(object sender, EventArgs e)
@@ -1047,7 +1108,7 @@ namespace Manage_File_Application
                     Extension = folder.Extension,
                     DateCreate = folder.CreationTime
                 });
-                addFolderToListView(folder.FullName);
+                refresh();
                 btnPaste.Enabled = false;
             }
             catch (Exception e)
@@ -1103,7 +1164,7 @@ namespace Manage_File_Application
                     Extension = file.Extension,
                     DateCreate = file.CreationTime
                 });
-                addFileToListView(file.FullName);
+                refresh();
                 btnPaste.Enabled = false;
             }
             catch (Exception e)
@@ -1151,6 +1212,10 @@ namespace Manage_File_Application
                 }))
                 {
                     addFolderToListView(newFolderPath);
+                    refresh();
+                    int index = listView.FindItemWithText(newFolderPath).Index;
+                    listView.Items[index].Selected = true;
+                    listView.Items[index].BeginEdit();
                 }
             }
             catch (Exception ex)
@@ -1202,6 +1267,10 @@ namespace Manage_File_Application
                 }))
                 {
                     addFileToListView(newFilePath);
+                    refresh();
+                    int index = listView.FindItemWithText(newFilePath).Index;
+                    listView.Items[index].Selected = true;
+                    listView.Items[index].BeginEdit();
                 }
             }
             catch (Exception ex)
@@ -1220,7 +1289,7 @@ namespace Manage_File_Application
         {
             if (string.IsNullOrEmpty(currDirPath))
             {
-                MessageBox.Show("Please click a folder to be enable to search", "Unable to search");
+                MessageBox.Show("Please click a folder to be able to search", "Unable to search");
             }
             else
             {
