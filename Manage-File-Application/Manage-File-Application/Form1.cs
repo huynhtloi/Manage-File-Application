@@ -780,7 +780,6 @@ namespace Manage_File_Application
                                 Directory.Delete(folderdelete.FullName, true);
                                 if (await elasticDAO.Delete(folderdelete.FullName))
                                 {
-                                    ListViewItem lvItem = listView.SelectedItems[0];
                                     refresh();
                                 }
                             }
@@ -794,7 +793,6 @@ namespace Manage_File_Application
                                 File.Delete(file.FullName);
                                 if (await elasticDAO.Delete(file.FullName))
                                 {
-                                    ListViewItem lvItem = listView.SelectedItems[0];
                                     refresh();
                                 }
                             }
