@@ -88,6 +88,7 @@ namespace Manage_File_Application
             this.label1 = new System.Windows.Forms.Label();
             this.txtProcess = new System.Windows.Forms.Label();
             this.btnShorcutKey = new System.Windows.Forms.Button();
+            this.tsRefreshElastic = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
@@ -107,9 +108,10 @@ namespace Manage_File_Application
             this.numItemsSelected.AutoSize = true;
             this.numItemsSelected.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.numItemsSelected.ForeColor = System.Drawing.SystemColors.MenuHighlight;
-            this.numItemsSelected.Location = new System.Drawing.Point(1095, 580);
+            this.numItemsSelected.Location = new System.Drawing.Point(821, 471);
+            this.numItemsSelected.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.numItemsSelected.Name = "numItemsSelected";
-            this.numItemsSelected.Size = new System.Drawing.Size(126, 17);
+            this.numItemsSelected.Size = new System.Drawing.Size(99, 13);
             this.numItemsSelected.TabIndex = 16;
             this.numItemsSelected.Text = "0 items selected";
             this.numItemsSelected.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -121,10 +123,10 @@ namespace Manage_File_Application
             this.btnBack.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnBack.ForeColor = System.Drawing.Color.Black;
             this.btnBack.Image = ((System.Drawing.Image)(resources.GetObject("btnBack.Image")));
-            this.btnBack.Location = new System.Drawing.Point(3, 2);
-            this.btnBack.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnBack.Location = new System.Drawing.Point(2, 2);
+            this.btnBack.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnBack.Name = "btnBack";
-            this.btnBack.Size = new System.Drawing.Size(53, 35);
+            this.btnBack.Size = new System.Drawing.Size(40, 28);
             this.btnBack.TabIndex = 3;
             this.btnBack.Tag = "";
             this.btnBack.UseCompatibleTextRendering = true;
@@ -136,10 +138,10 @@ namespace Manage_File_Application
             this.btnGo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.btnGo.Image = ((System.Drawing.Image)(resources.GetObject("btnGo.Image")));
-            this.btnGo.Location = new System.Drawing.Point(1252, 2);
-            this.btnGo.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnGo.Location = new System.Drawing.Point(939, 2);
+            this.btnGo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnGo.Name = "btnGo";
-            this.btnGo.Size = new System.Drawing.Size(73, 35);
+            this.btnGo.Size = new System.Drawing.Size(55, 28);
             this.btnGo.TabIndex = 2;
             this.btnGo.UseVisualStyleBackColor = true;
             this.btnGo.Click += new System.EventHandler(this.btnGo_Click);
@@ -150,10 +152,10 @@ namespace Manage_File_Application
             | System.Windows.Forms.AnchorStyles.Left)));
             this.btnForward.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnForward.Image = ((System.Drawing.Image)(resources.GetObject("btnForward.Image")));
-            this.btnForward.Location = new System.Drawing.Point(63, 2);
-            this.btnForward.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnForward.Location = new System.Drawing.Point(47, 2);
+            this.btnForward.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnForward.Name = "btnForward";
-            this.btnForward.Size = new System.Drawing.Size(53, 35);
+            this.btnForward.Size = new System.Drawing.Size(40, 28);
             this.btnForward.TabIndex = 4;
             this.btnForward.UseCompatibleTextRendering = true;
             this.btnForward.UseVisualStyleBackColor = true;
@@ -163,10 +165,10 @@ namespace Manage_File_Application
             // 
             this.txtPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtPath.Location = new System.Drawing.Point(123, 5);
-            this.txtPath.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtPath.Location = new System.Drawing.Point(92, 4);
+            this.txtPath.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtPath.Name = "txtPath";
-            this.txtPath.Size = new System.Drawing.Size(1123, 28);
+            this.txtPath.Size = new System.Drawing.Size(843, 24);
             this.txtPath.TabIndex = 1;
             this.txtPath.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtPath_KeyDown);
             // 
@@ -174,10 +176,10 @@ namespace Manage_File_Application
             // 
             this.btnRename.BackColor = System.Drawing.SystemColors.Control;
             this.btnRename.Image = ((System.Drawing.Image)(resources.GetObject("btnRename.Image")));
-            this.btnRename.Location = new System.Drawing.Point(427, 5);
-            this.btnRename.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnRename.Location = new System.Drawing.Point(320, 4);
+            this.btnRename.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnRename.Name = "btnRename";
-            this.btnRename.Size = new System.Drawing.Size(113, 60);
+            this.btnRename.Size = new System.Drawing.Size(85, 49);
             this.btnRename.TabIndex = 5;
             this.btnRename.Text = "Rename";
             this.btnRename.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -188,10 +190,10 @@ namespace Manage_File_Application
             // 
             this.btnDelete.BackColor = System.Drawing.SystemColors.Control;
             this.btnDelete.Image = ((System.Drawing.Image)(resources.GetObject("btnDelete.Image")));
-            this.btnDelete.Location = new System.Drawing.Point(316, 5);
-            this.btnDelete.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnDelete.Location = new System.Drawing.Point(237, 4);
+            this.btnDelete.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(105, 60);
+            this.btnDelete.Size = new System.Drawing.Size(79, 49);
             this.btnDelete.TabIndex = 4;
             this.btnDelete.Text = "Delete";
             this.btnDelete.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -203,20 +205,20 @@ namespace Manage_File_Application
             this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.ColumnCount = 4;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 45F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 45F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 79F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 59F));
             this.tableLayoutPanel1.Controls.Add(this.btnBack, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.btnForward, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.txtPath, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.btnGo, 3, 0);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(12, 111);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(9, 90);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1328, 39);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(996, 32);
             this.tableLayoutPanel1.TabIndex = 11;
             // 
             // imageSmall
@@ -228,10 +230,10 @@ namespace Manage_File_Application
             // btnDetail
             // 
             this.btnDetail.Image = ((System.Drawing.Image)(resources.GetObject("btnDetail.Image")));
-            this.btnDetail.Location = new System.Drawing.Point(259, 5);
-            this.btnDetail.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnDetail.Location = new System.Drawing.Point(194, 4);
+            this.btnDetail.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnDetail.Name = "btnDetail";
-            this.btnDetail.Size = new System.Drawing.Size(120, 60);
+            this.btnDetail.Size = new System.Drawing.Size(90, 49);
             this.btnDetail.TabIndex = 5;
             this.btnDetail.Text = "Details";
             this.btnDetail.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -241,10 +243,10 @@ namespace Manage_File_Application
             // btnTile
             // 
             this.btnTile.Image = ((System.Drawing.Image)(resources.GetObject("btnTile.Image")));
-            this.btnTile.Location = new System.Drawing.Point(509, 5);
-            this.btnTile.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnTile.Location = new System.Drawing.Point(382, 4);
+            this.btnTile.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnTile.Name = "btnTile";
-            this.btnTile.Size = new System.Drawing.Size(120, 60);
+            this.btnTile.Size = new System.Drawing.Size(90, 49);
             this.btnTile.TabIndex = 4;
             this.btnTile.Text = "Tiles";
             this.btnTile.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -254,10 +256,10 @@ namespace Manage_File_Application
             // btnList
             // 
             this.btnList.Image = ((System.Drawing.Image)(resources.GetObject("btnList.Image")));
-            this.btnList.Location = new System.Drawing.Point(384, 5);
-            this.btnList.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnList.Location = new System.Drawing.Point(288, 4);
+            this.btnList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnList.Name = "btnList";
-            this.btnList.Size = new System.Drawing.Size(120, 60);
+            this.btnList.Size = new System.Drawing.Size(90, 49);
             this.btnList.TabIndex = 3;
             this.btnList.Text = "List";
             this.btnList.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -267,10 +269,10 @@ namespace Manage_File_Application
             // btnSmallIcon
             // 
             this.btnSmallIcon.Image = ((System.Drawing.Image)(resources.GetObject("btnSmallIcon.Image")));
-            this.btnSmallIcon.Location = new System.Drawing.Point(132, 5);
-            this.btnSmallIcon.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnSmallIcon.Location = new System.Drawing.Point(99, 4);
+            this.btnSmallIcon.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnSmallIcon.Name = "btnSmallIcon";
-            this.btnSmallIcon.Size = new System.Drawing.Size(120, 60);
+            this.btnSmallIcon.Size = new System.Drawing.Size(90, 49);
             this.btnSmallIcon.TabIndex = 2;
             this.btnSmallIcon.Text = "Small";
             this.btnSmallIcon.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -280,10 +282,10 @@ namespace Manage_File_Application
             // btnLargeIcon
             // 
             this.btnLargeIcon.Image = ((System.Drawing.Image)(resources.GetObject("btnLargeIcon.Image")));
-            this.btnLargeIcon.Location = new System.Drawing.Point(5, 5);
-            this.btnLargeIcon.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnLargeIcon.Location = new System.Drawing.Point(4, 4);
+            this.btnLargeIcon.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnLargeIcon.Name = "btnLargeIcon";
-            this.btnLargeIcon.Size = new System.Drawing.Size(120, 60);
+            this.btnLargeIcon.Size = new System.Drawing.Size(90, 49);
             this.btnLargeIcon.TabIndex = 0;
             this.btnLargeIcon.Text = "Large";
             this.btnLargeIcon.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -296,8 +298,8 @@ namespace Manage_File_Application
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer.Location = new System.Drawing.Point(12, 158);
-            this.splitContainer.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.splitContainer.Location = new System.Drawing.Point(9, 128);
+            this.splitContainer.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.splitContainer.Name = "splitContainer";
             // 
             // splitContainer.Panel1
@@ -309,8 +311,9 @@ namespace Manage_File_Application
             // 
             this.splitContainer.Panel2.Controls.Add(this.listView);
             this.splitContainer.Panel2MinSize = 200;
-            this.splitContainer.Size = new System.Drawing.Size(1328, 420);
+            this.splitContainer.Size = new System.Drawing.Size(996, 341);
             this.splitContainer.SplitterDistance = 216;
+            this.splitContainer.SplitterWidth = 3;
             this.splitContainer.TabIndex = 17;
             // 
             // treeFolder
@@ -323,11 +326,11 @@ namespace Manage_File_Application
             this.treeFolder.ImageIndex = 0;
             this.treeFolder.ImageList = this.imageTreeFolder;
             this.treeFolder.Location = new System.Drawing.Point(0, -1);
-            this.treeFolder.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.treeFolder.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.treeFolder.Name = "treeFolder";
             this.treeFolder.SelectedImageIndex = 0;
             this.treeFolder.ShowLines = false;
-            this.treeFolder.Size = new System.Drawing.Size(217, 421);
+            this.treeFolder.Size = new System.Drawing.Size(218, 343);
             this.treeFolder.TabIndex = 4;
             this.treeFolder.BeforeCollapse += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeFolder_BeforeCollapse);
             this.treeFolder.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeFolder_BeforeExpand);
@@ -357,10 +360,10 @@ namespace Manage_File_Application
             this.listView.HideSelection = false;
             this.listView.LabelEdit = true;
             this.listView.LargeImageList = this.imageLarge;
-            this.listView.Location = new System.Drawing.Point(-7, -1);
-            this.listView.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.listView.Location = new System.Drawing.Point(-5, -1);
+            this.listView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.listView.Name = "listView";
-            this.listView.Size = new System.Drawing.Size(1113, 421);
+            this.listView.Size = new System.Drawing.Size(782, 343);
             this.listView.SmallImageList = this.imageSmall;
             this.listView.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listView.TabIndex = 1;
@@ -408,6 +411,7 @@ namespace Manage_File_Application
             this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsOpen,
             this.tsRefresh,
+            this.tsRefreshElastic,
             this.tsLine1,
             this.tsCut,
             this.tsCopy,
@@ -420,85 +424,85 @@ namespace Manage_File_Application
             this.tsNewFolder});
             this.contextMenuStrip.Name = "contextMenuStrip";
             this.contextMenuStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.contextMenuStrip.Size = new System.Drawing.Size(155, 238);
+            this.contextMenuStrip.Size = new System.Drawing.Size(181, 264);
             this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
             // 
             // tsOpen
             // 
             this.tsOpen.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.tsOpen.Name = "tsOpen";
-            this.tsOpen.Size = new System.Drawing.Size(154, 24);
+            this.tsOpen.Size = new System.Drawing.Size(180, 22);
             this.tsOpen.Text = "Open";
             this.tsOpen.Click += new System.EventHandler(this.tsOpen_Click);
             // 
             // tsRefresh
             // 
             this.tsRefresh.Name = "tsRefresh";
-            this.tsRefresh.Size = new System.Drawing.Size(154, 24);
+            this.tsRefresh.Size = new System.Drawing.Size(180, 22);
             this.tsRefresh.Text = "Refresh";
             this.tsRefresh.Click += new System.EventHandler(this.tsRefresh_Click);
             // 
             // tsLine1
             // 
             this.tsLine1.Name = "tsLine1";
-            this.tsLine1.Size = new System.Drawing.Size(151, 6);
+            this.tsLine1.Size = new System.Drawing.Size(177, 6);
             // 
             // tsCut
             // 
             this.tsCut.Name = "tsCut";
-            this.tsCut.Size = new System.Drawing.Size(154, 24);
+            this.tsCut.Size = new System.Drawing.Size(180, 22);
             this.tsCut.Text = "Cut";
             this.tsCut.Click += new System.EventHandler(this.tsCut_Click);
             // 
             // tsCopy
             // 
             this.tsCopy.Name = "tsCopy";
-            this.tsCopy.Size = new System.Drawing.Size(154, 24);
+            this.tsCopy.Size = new System.Drawing.Size(180, 22);
             this.tsCopy.Text = "Copy";
             this.tsCopy.Click += new System.EventHandler(this.tsCopy_Click);
             // 
             // tsLine2
             // 
             this.tsLine2.Name = "tsLine2";
-            this.tsLine2.Size = new System.Drawing.Size(151, 6);
+            this.tsLine2.Size = new System.Drawing.Size(177, 6);
             // 
             // tsDelete
             // 
             this.tsDelete.Name = "tsDelete";
-            this.tsDelete.Size = new System.Drawing.Size(154, 24);
+            this.tsDelete.Size = new System.Drawing.Size(180, 22);
             this.tsDelete.Text = "Delete";
             this.tsDelete.Click += new System.EventHandler(this.tsDelete_Click);
             // 
             // tsRename
             // 
             this.tsRename.Name = "tsRename";
-            this.tsRename.Size = new System.Drawing.Size(154, 24);
+            this.tsRename.Size = new System.Drawing.Size(180, 22);
             this.tsRename.Text = "Rename";
             this.tsRename.Click += new System.EventHandler(this.tsRename_Click);
             // 
             // tsPaste
             // 
             this.tsPaste.Name = "tsPaste";
-            this.tsPaste.Size = new System.Drawing.Size(154, 24);
+            this.tsPaste.Size = new System.Drawing.Size(180, 22);
             this.tsPaste.Text = "Paste";
             this.tsPaste.Click += new System.EventHandler(this.tsPaste_Click);
             // 
             // tsLine3
             // 
             this.tsLine3.Name = "tsLine3";
-            this.tsLine3.Size = new System.Drawing.Size(151, 6);
+            this.tsLine3.Size = new System.Drawing.Size(177, 6);
             // 
             // tsNewFile
             // 
             this.tsNewFile.Name = "tsNewFile";
-            this.tsNewFile.Size = new System.Drawing.Size(154, 24);
+            this.tsNewFile.Size = new System.Drawing.Size(180, 22);
             this.tsNewFile.Text = "New File";
             this.tsNewFile.Click += new System.EventHandler(this.tsNewFile_Click);
             // 
             // tsNewFolder
             // 
             this.tsNewFolder.Name = "tsNewFolder";
-            this.tsNewFolder.Size = new System.Drawing.Size(154, 24);
+            this.tsNewFolder.Size = new System.Drawing.Size(180, 22);
             this.tsNewFolder.Text = "New Folder";
             this.tsNewFolder.Click += new System.EventHandler(this.tsNewFolder_Click);
             // 
@@ -513,10 +517,10 @@ namespace Manage_File_Application
             this.btnSearch.Dock = System.Windows.Forms.DockStyle.Right;
             this.btnSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSearch.Image = ((System.Drawing.Image)(resources.GetObject("btnSearch.Image")));
-            this.btnSearch.Location = new System.Drawing.Point(1226, 2);
-            this.btnSearch.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnSearch.Location = new System.Drawing.Point(918, 2);
+            this.btnSearch.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(92, 67);
+            this.btnSearch.Size = new System.Drawing.Size(69, 51);
             this.btnSearch.TabIndex = 4;
             this.btnSearch.UseVisualStyleBackColor = true;
             this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
@@ -526,10 +530,10 @@ namespace Manage_File_Application
             this.txtSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtSearch.Location = new System.Drawing.Point(173, 20);
-            this.txtSearch.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtSearch.Location = new System.Drawing.Point(130, 16);
+            this.txtSearch.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtSearch.Name = "txtSearch";
-            this.txtSearch.Size = new System.Drawing.Size(1047, 28);
+            this.txtSearch.Size = new System.Drawing.Size(786, 24);
             this.txtSearch.TabIndex = 2;
             this.txtSearch.Enter += new System.EventHandler(this.txtSearch_Enter);
             this.txtSearch.Leave += new System.EventHandler(this.txtSearch_Leave);
@@ -539,9 +543,10 @@ namespace Manage_File_Application
             this.numItems.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.numItems.AutoSize = true;
             this.numItems.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.numItems.Location = new System.Drawing.Point(1261, 580);
+            this.numItems.Location = new System.Drawing.Point(946, 471);
+            this.numItems.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.numItems.Name = "numItems";
-            this.numItems.Size = new System.Drawing.Size(65, 17);
+            this.numItems.Size = new System.Drawing.Size(52, 13);
             this.numItems.TabIndex = 12;
             this.numItems.Text = "Items: 0";
             this.numItems.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -553,11 +558,11 @@ namespace Manage_File_Application
             this.tabControl.Controls.Add(this.tabPage1);
             this.tabControl.Controls.Add(this.tabPage2);
             this.tabControl.Controls.Add(this.tabPage3);
-            this.tabControl.Location = new System.Drawing.Point(12, 10);
-            this.tabControl.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tabControl.Location = new System.Drawing.Point(9, 8);
+            this.tabControl.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(1329, 100);
+            this.tabControl.Size = new System.Drawing.Size(997, 81);
             this.tabControl.TabIndex = 6;
             // 
             // tabPage1
@@ -567,11 +572,11 @@ namespace Manage_File_Application
             this.tabPage1.Controls.Add(this.btnTile);
             this.tabPage1.Controls.Add(this.btnSmallIcon);
             this.tabPage1.Controls.Add(this.btnList);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.tabPage1.Size = new System.Drawing.Size(1321, 71);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabPage1.Size = new System.Drawing.Size(989, 55);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Layout";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -586,11 +591,11 @@ namespace Manage_File_Application
             this.tabPage2.Controls.Add(this.btnCopy);
             this.tabPage2.Controls.Add(this.btnRename);
             this.tabPage2.Controls.Add(this.btnDelete);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.tabPage2.Size = new System.Drawing.Size(1321, 71);
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabPage2.Size = new System.Drawing.Size(989, 55);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Function";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -599,10 +604,10 @@ namespace Manage_File_Application
             // 
             this.btnOpen.BackColor = System.Drawing.SystemColors.Control;
             this.btnOpen.Image = ((System.Drawing.Image)(resources.GetObject("btnOpen.Image")));
-            this.btnOpen.Location = new System.Drawing.Point(821, 5);
-            this.btnOpen.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnOpen.Location = new System.Drawing.Point(616, 4);
+            this.btnOpen.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnOpen.Name = "btnOpen";
-            this.btnOpen.Size = new System.Drawing.Size(101, 60);
+            this.btnOpen.Size = new System.Drawing.Size(76, 49);
             this.btnOpen.TabIndex = 13;
             this.btnOpen.Text = "Open";
             this.btnOpen.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -613,10 +618,10 @@ namespace Manage_File_Application
             // 
             this.btnNewFile.BackColor = System.Drawing.SystemColors.Control;
             this.btnNewFile.Image = ((System.Drawing.Image)(resources.GetObject("btnNewFile.Image")));
-            this.btnNewFile.Location = new System.Drawing.Point(684, 5);
-            this.btnNewFile.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnNewFile.Location = new System.Drawing.Point(513, 4);
+            this.btnNewFile.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnNewFile.Name = "btnNewFile";
-            this.btnNewFile.Size = new System.Drawing.Size(131, 60);
+            this.btnNewFile.Size = new System.Drawing.Size(98, 49);
             this.btnNewFile.TabIndex = 12;
             this.btnNewFile.Text = "New file";
             this.btnNewFile.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -627,10 +632,10 @@ namespace Manage_File_Application
             // 
             this.btnNewFolder.BackColor = System.Drawing.SystemColors.Control;
             this.btnNewFolder.Image = ((System.Drawing.Image)(resources.GetObject("btnNewFolder.Image")));
-            this.btnNewFolder.Location = new System.Drawing.Point(547, 5);
-            this.btnNewFolder.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnNewFolder.Location = new System.Drawing.Point(410, 4);
+            this.btnNewFolder.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnNewFolder.Name = "btnNewFolder";
-            this.btnNewFolder.Size = new System.Drawing.Size(132, 60);
+            this.btnNewFolder.Size = new System.Drawing.Size(99, 49);
             this.btnNewFolder.TabIndex = 11;
             this.btnNewFolder.Text = "New folder";
             this.btnNewFolder.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -641,10 +646,10 @@ namespace Manage_File_Application
             // 
             this.btnCut.BackColor = System.Drawing.SystemColors.Control;
             this.btnCut.Image = ((System.Drawing.Image)(resources.GetObject("btnCut.Image")));
-            this.btnCut.Location = new System.Drawing.Point(225, 5);
-            this.btnCut.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnCut.Location = new System.Drawing.Point(169, 4);
+            this.btnCut.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnCut.Name = "btnCut";
-            this.btnCut.Size = new System.Drawing.Size(85, 60);
+            this.btnCut.Size = new System.Drawing.Size(64, 49);
             this.btnCut.TabIndex = 8;
             this.btnCut.Text = "Cut";
             this.btnCut.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -655,10 +660,10 @@ namespace Manage_File_Application
             // 
             this.btnPaste.BackColor = System.Drawing.SystemColors.Control;
             this.btnPaste.Image = ((System.Drawing.Image)(resources.GetObject("btnPaste.Image")));
-            this.btnPaste.Location = new System.Drawing.Point(117, 5);
-            this.btnPaste.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnPaste.Location = new System.Drawing.Point(88, 4);
+            this.btnPaste.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnPaste.Name = "btnPaste";
-            this.btnPaste.Size = new System.Drawing.Size(101, 60);
+            this.btnPaste.Size = new System.Drawing.Size(76, 49);
             this.btnPaste.TabIndex = 7;
             this.btnPaste.Text = "Paste";
             this.btnPaste.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -669,10 +674,10 @@ namespace Manage_File_Application
             // 
             this.btnCopy.BackColor = System.Drawing.SystemColors.Control;
             this.btnCopy.Image = ((System.Drawing.Image)(resources.GetObject("btnCopy.Image")));
-            this.btnCopy.Location = new System.Drawing.Point(5, 5);
-            this.btnCopy.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnCopy.Location = new System.Drawing.Point(4, 4);
+            this.btnCopy.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnCopy.Name = "btnCopy";
-            this.btnCopy.Size = new System.Drawing.Size(107, 60);
+            this.btnCopy.Size = new System.Drawing.Size(80, 49);
             this.btnCopy.TabIndex = 6;
             this.btnCopy.Text = "Copy";
             this.btnCopy.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -684,11 +689,11 @@ namespace Manage_File_Application
             this.tabPage3.Controls.Add(this.cbChooseSearch);
             this.tabPage3.Controls.Add(this.btnSearch);
             this.tabPage3.Controls.Add(this.txtSearch);
-            this.tabPage3.Location = new System.Drawing.Point(4, 25);
-            this.tabPage3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.tabPage3.Size = new System.Drawing.Size(1321, 71);
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabPage3.Size = new System.Drawing.Size(989, 55);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Search";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -700,19 +705,18 @@ namespace Manage_File_Application
             this.cbChooseSearch.Items.AddRange(new object[] {
             "Name",
             "Content"});
-            this.cbChooseSearch.Location = new System.Drawing.Point(5, 20);
-            this.cbChooseSearch.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.cbChooseSearch.Location = new System.Drawing.Point(4, 16);
+            this.cbChooseSearch.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.cbChooseSearch.Name = "cbChooseSearch";
-            this.cbChooseSearch.Size = new System.Drawing.Size(161, 28);
+            this.cbChooseSearch.Size = new System.Drawing.Size(122, 25);
             this.cbChooseSearch.TabIndex = 5;
             // 
             // elasticHttpSearchProgress
             // 
             this.elasticHttpSearchProgress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.elasticHttpSearchProgress.Location = new System.Drawing.Point(154, 580);
-            this.elasticHttpSearchProgress.Margin = new System.Windows.Forms.Padding(4);
+            this.elasticHttpSearchProgress.Location = new System.Drawing.Point(116, 471);
             this.elasticHttpSearchProgress.Name = "elasticHttpSearchProgress";
-            this.elasticHttpSearchProgress.Size = new System.Drawing.Size(307, 20);
+            this.elasticHttpSearchProgress.Size = new System.Drawing.Size(230, 16);
             this.elasticHttpSearchProgress.TabIndex = 18;
             // 
             // errorProvider1
@@ -723,10 +727,9 @@ namespace Manage_File_Application
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 580);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Location = new System.Drawing.Point(10, 471);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(133, 17);
+            this.label1.Size = new System.Drawing.Size(101, 13);
             this.label1.TabIndex = 2;
             this.label1.Text = "Search proccessing";
             // 
@@ -734,10 +737,9 @@ namespace Manage_File_Application
             // 
             this.txtProcess.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtProcess.AutoSize = true;
-            this.txtProcess.Location = new System.Drawing.Point(469, 580);
-            this.txtProcess.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.txtProcess.Location = new System.Drawing.Point(352, 471);
             this.txtProcess.Name = "txtProcess";
-            this.txtProcess.Size = new System.Drawing.Size(28, 17);
+            this.txtProcess.Size = new System.Drawing.Size(24, 13);
             this.txtProcess.TabIndex = 19;
             this.txtProcess.Text = "0/0";
             // 
@@ -746,19 +748,28 @@ namespace Manage_File_Application
             this.btnShorcutKey.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnShorcutKey.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnShorcutKey.ForeColor = System.Drawing.Color.Blue;
-            this.btnShorcutKey.Location = new System.Drawing.Point(1311, 3);
+            this.btnShorcutKey.Location = new System.Drawing.Point(983, 2);
+            this.btnShorcutKey.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnShorcutKey.Name = "btnShorcutKey";
-            this.btnShorcutKey.Size = new System.Drawing.Size(27, 27);
+            this.btnShorcutKey.Size = new System.Drawing.Size(20, 22);
             this.btnShorcutKey.TabIndex = 20;
             this.btnShorcutKey.Text = "?";
             this.btnShorcutKey.UseVisualStyleBackColor = true;
             this.btnShorcutKey.Click += new System.EventHandler(this.btnShorcutKey_Click);
             // 
+            // tsRefreshElastic
+            // 
+            this.tsRefreshElastic.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.tsRefreshElastic.Name = "tsRefreshElastic";
+            this.tsRefreshElastic.Size = new System.Drawing.Size(180, 22);
+            this.tsRefreshElastic.Text = "Refresh Search";
+            this.tsRefreshElastic.Click += new System.EventHandler(this.tsRefreshElastic_Click);
+            // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1352, 607);
+            this.ClientSize = new System.Drawing.Size(1014, 493);
             this.Controls.Add(this.btnShorcutKey);
             this.Controls.Add(this.txtProcess);
             this.Controls.Add(this.label1);
@@ -769,7 +780,7 @@ namespace Manage_File_Application
             this.Controls.Add(this.splitContainer);
             this.Controls.Add(this.numItems);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "Form1";
             this.Text = "Manager Files";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -850,6 +861,7 @@ namespace Manage_File_Application
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label txtProcess;
         private System.Windows.Forms.Button btnShorcutKey;
+        private System.Windows.Forms.ToolStripMenuItem tsRefreshElastic;
     }
 }
 

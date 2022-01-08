@@ -930,7 +930,7 @@ namespace Manage_File_Application
 
         private void tsRefresh_Click(object sender, EventArgs e)
         {
-            refreshWithElastic();
+            refresh();
         }
 
         private void btnCopy_Click(object sender, EventArgs e)
@@ -1411,6 +1411,11 @@ namespace Manage_File_Application
                 "Shortcut Key",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
+        }
+
+        private void tsRefreshElastic_Click(object sender, EventArgs e)
+        {
+            refreshWithElastic();
         }
     }
 }
