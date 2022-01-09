@@ -1113,15 +1113,18 @@ namespace Manage_File_Application
                     btnPaste.Enabled = false;
                 }
 
-                elasticFiles.Add(new Model.File()
+                Task task = Task.Run((Action)(() =>
                 {
-                    Id = folder.FullName,
-                    Name = folder.Name,
-                    Path = folder.FullName,
-                    isFolder = true,
-                    Extension = folder.Extension,
-                    DateCreate = folder.CreationTime
-                });
+                    elasticDAO.Create(new Model.File()
+                    {
+                        Id = destinationFolder.FullName,
+                        Name = destinationFolder.Name,
+                        Path = destinationFolder.FullName,
+                        isFolder = true,
+                        Extension = destinationFolder.Extension,
+                        DateCreate = destinationFolder.CreationTime
+                    });
+                }));
 
                 refresh();
             }
@@ -1206,17 +1209,20 @@ namespace Manage_File_Application
                     file.MoveTo(destinationPath);
                     btnPaste.Enabled = false;
                 }
-
-                elasticFiles.Add(new Model.File()
+                FileInfo destinationFile = new FileInfo(destinationPath);
+                Task task = Task.Run((Action)(() =>
                 {
-                    Id = file.FullName,
-                    Name = file.Name,
-                    Path = file.FullName,
-                    isFolder = false,
-                    Extension = file.Extension,
-                    DateCreate = file.CreationTime
-                });
-
+                    elasticDAO.Create(new Model.File()
+                    {
+                        Id = destinationFile.FullName,
+                        Name = destinationFile.Name,
+                        Path = destinationFile.FullName,
+                        isFolder = false,
+                        Content = ReadContent(destinationFile.Extension, destinationFile.FullName),
+                        Extension = destinationFile.Extension,
+                        DateCreate = destinationFile.CreationTime
+                    }) ;
+                }));
                 refresh();
             }
             catch (Exception e)
