@@ -519,7 +519,7 @@ namespace Manage_File_Application
                 }
                 else // File
                 {
-                    Process.Start(listView.FocusedItem.SubItems[1].Text);
+                    Process.Start(listView.FocusedItem.SubItems[5].Text);
                 }
             }
             catch
@@ -606,7 +606,7 @@ namespace Manage_File_Application
         // Đổi tên file or folder trong hệ thống sau khi sửa trên listView
         private void listView_AfterLabelEditAsync(object sender, LabelEditEventArgs e)
         {
-            string path = listView.FocusedItem.SubItems[1].Text;
+            string path = listView.FocusedItem.SubItems[5].Text;
 
             var currentDir = System.IO.Path.GetDirectoryName(path);
 
