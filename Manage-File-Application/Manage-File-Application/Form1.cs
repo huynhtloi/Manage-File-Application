@@ -652,39 +652,66 @@ namespace Manage_File_Application
                 }
                 else  // file
                 {
-                    // Nối path với tên file sửa
-                    string newFileName = System.IO.Path.Combine(currentDir, e.Label);
+                    string[] tmp = e.Label.Split('.');
+                    string[] oldName = item.Text.Split('.');
 
-                    // Kiểm tra tên file sửa có trùng với tên file nào hiện có trong thư mục
-                    if (File.Exists(newFileName))
+                    if (tmp.Length < 2)
                     {
-                        MessageBox.Show("There is already a file with the same name in this location", "Rename File");
-                        e.CancelEdit = true;
+                        DialogResult result = MessageBox.Show("Your file name has no extension.\n\n Are you sure you want to change it?", "Rename File", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                        if (result.Equals(DialogResult.Yes))
+                        {
+                            renameFile(path, currentDir, e);
+                        }
+                        else { }
+                    }
+                    else if (oldName.Length > 1 && tmp.Last() != oldName.Last())
+                    {
+                        DialogResult result = MessageBox.Show("If you change a file name extension, the file might become unusable.\n\n Are you sure you want to change it?", "Rename File", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                        if (result.Equals(DialogResult.Yes))
+                        {
+                            renameFile(path, currentDir, e);
+                        }
+                        else { }
                     }
                     else
                     {
-                        // Đổi tên file
-                        File.Move(path, newFileName);
-                        FileInfo fileInfo = new FileInfo(newFileName);
-                        Task task = Task.Run((Action)(() => {
-                            elasticDAO.Delete(path);
-                            elasticDAO.Create(new Model.File()
-                            {
-                                Id = fileInfo.FullName,
-                                Name = fileInfo.Name,
-                                Path = fileInfo.FullName,
-                                isFolder = false,
-                                Content = ReadContent(fileInfo.Extension, fileInfo.FullName),
-                                Extension = fileInfo.Extension,
-                                DateCreate = fileInfo.CreationTime
-                            });
-                        }));
+                        renameFile(path, currentDir, e);
                     }
                 }
             }
             listView.BeginInvoke(new MethodInvoker(() => refresh()));
         }
+        private void renameFile(string path, string currentDir, LabelEditEventArgs e)
+        {
+            // Nối path với tên file sửa
+            string newFileName = System.IO.Path.Combine(currentDir, e.Label);
 
+            // Kiểm tra tên file sửa có trùng với tên file nào hiện có trong thư mục
+            if (File.Exists(newFileName))
+            {
+                MessageBox.Show("There is already a file with the same name in this location", "Rename File");
+                e.CancelEdit = true;
+            }
+            else
+            {
+                // Đổi tên file
+                File.Move(path, newFileName);
+                FileInfo fileInfo = new FileInfo(newFileName);
+                Task task = Task.Run((Action)(() => {
+                    elasticDAO.Delete(path);
+                    elasticDAO.Create(new Model.File()
+                    {
+                        Id = fileInfo.FullName,
+                        Name = fileInfo.Name,
+                        Path = fileInfo.FullName,
+                        isFolder = false,
+                        Content = ReadContent(fileInfo.Extension, fileInfo.FullName),
+                        Extension = fileInfo.Extension,
+                        DateCreate = fileInfo.CreationTime
+                    });
+                }));
+            }
+        }
         // Kiểm tra kí tự đặc biệt
         public static bool checkFileName(string fileName)
         {
@@ -1055,6 +1082,7 @@ namespace Manage_File_Application
                         DoTheElasticThings();
                     }
                 }
+                arrCut.Clear();
             }
             else
             {
