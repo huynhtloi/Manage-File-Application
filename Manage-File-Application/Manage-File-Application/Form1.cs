@@ -27,8 +27,6 @@ namespace Manage_File_Application
         private List<Task> currTasks;
         private string currDirPath;
 
-        //int currentIndex = 0;
-        //double taskFinished = 0;
         // Stack chứa đường dẫn
         private Stack<string> pathStack = new Stack<string>();
 
@@ -61,6 +59,7 @@ namespace Manage_File_Application
             currTasks = new List<Task>();
             cancelTasks = false;
             tokenSource = new CancellationTokenSource();
+
             // Disable nút back, forward
             btnBack.Enabled = false;
             btnForward.Enabled = false;
@@ -549,7 +548,7 @@ namespace Manage_File_Application
 
         }
 
-        // Bấm F2 để Rename File
+        // Key Shorcut
         private void listView_KeyDown(object sender, KeyEventArgs e)
         {
             if (listView.SelectedItems.Count > 0)
@@ -649,7 +648,6 @@ namespace Manage_File_Application
                                 DateCreate = dirInfo.CreationTime
                             });
                         }));
-                        refresh();
                     }
                 }
                 else  // file
@@ -681,10 +679,10 @@ namespace Manage_File_Application
                                 DateCreate = fileInfo.CreationTime
                             });
                         }));
-                        refresh();
                     }
                 }
             }
+            listView.BeginInvoke(new MethodInvoker(() => refresh()));
         }
 
         // Kiểm tra kí tự đặc biệt
@@ -778,23 +776,13 @@ namespace Manage_File_Application
                             {
                                 DirectoryInfo folderdelete = (DirectoryInfo)item.Tag;
                                 Directory.Delete(folderdelete.FullName, true);
-                                if (await elasticDAO.Delete(folderdelete.FullName))
-                                {
-                                    refresh();
-                                }
+                                refresh();
                             }
                             else // File
                             {
                                 FileInfo file = (FileInfo)item.Tag;
-                                using (File.Create(file.FullName))
-                                {
-
-                                }
                                 File.Delete(file.FullName);
-                                if (await elasticDAO.Delete(file.FullName))
-                                {
-                                    refresh();
-                                }
+                                refresh();
                             }
                         }
                     }
@@ -880,13 +868,13 @@ namespace Manage_File_Application
                 tsDelete.Visible = false;
                 tsRename.Visible = false;
                 tsRefresh.Visible = true;
+                tsRefreshElastic.Visible = true;
                 tsCopy.Visible = false;
                 tsCut.Visible = false;
                 tsPaste.Visible = true;
                 tsLine1.Visible = false;
                 tsNewFile.Visible = true;
                 tsNewFolder.Visible = true;
-
 
                 if (arrCopy.Count > 0 || arrCut.Count > 0)
                 {
@@ -902,7 +890,8 @@ namespace Manage_File_Application
                 tsOpen.Visible = true;
                 tsDelete.Visible = true;
                 tsRename.Visible = true;
-                tsRefresh.Visible = true;
+                tsRefresh.Visible = false;
+                tsRefreshElastic.Visible = false;
                 tsCopy.Visible = true;
                 tsCut.Visible = true;
                 tsPaste.Visible = false;
@@ -943,8 +932,6 @@ namespace Manage_File_Application
             copyFileOrFolder();
         }
 
-        private int numFilePaste = 0;
-
         private void copyFileOrFolder()
         {
             // Nếu chưa chọn file or folder để copy
@@ -958,16 +945,13 @@ namespace Manage_File_Application
                 {
                     arrCopy.Clear();
                     arrCut.Clear();
-                    numFilePaste = 0;
                     btnPaste.Enabled = true;
 
                     // Thêm file or folder cần copy vào danh sách tạm thời
                     foreach (ListViewItem item in listView.SelectedItems)
                     {
                         arrCopy.Add(item.Tag);
-                        //arrCopy.Add(item.SubItems[1].Text);
                     }
-
                 }
                 catch (Exception ex)
                 {
@@ -1000,14 +984,12 @@ namespace Manage_File_Application
                 {
                     arrCut.Clear();
                     arrCopy.Clear();
-                    numFilePaste = 0;
                     btnPaste.Enabled = true;
 
                     // Thêm file or folder cần di chuyển vào danh sách tạm thời
                     foreach (ListViewItem item in listView.SelectedItems)
                     {
                         arrCut.Add(item.Tag);
-                        //arrCut.Add(item.SubItems[1].Text);
                     }
                 }
                 catch (Exception ex)
@@ -1039,9 +1021,9 @@ namespace Manage_File_Application
                     // folder
                     if (tmp.GetType() == typeof(DirectoryInfo))
                     {
-                        DirectoryInfo folderpaste = (DirectoryInfo)tmp;
+                        DirectoryInfo folder = (DirectoryInfo)tmp;
                         // Dùng hàm CopyorCutFolder() để paste ra folder copy
-                        pasteFolderCopyOrCut(folderpaste.FullName, true);
+                        pasteFolderCopyOrCut(folder.FullName, true);
                     }
                     else // file
                     {
@@ -1060,9 +1042,9 @@ namespace Manage_File_Application
                     // folder
                     if (tmp.GetType() == typeof(DirectoryInfo))
                     {
-                        DirectoryInfo folderpaste = (DirectoryInfo)tmp;
+                        DirectoryInfo folder = (DirectoryInfo)tmp;
                         // Dùng hàm CopyorCutFolder() để paste ra folder copy
-                        pasteFolderCopyOrCut(folderpaste.FullName, false);
+                        pasteFolderCopyOrCut(folder.FullName, false);
                         DoTheElasticThings();
                     }
                     else // file
@@ -1091,12 +1073,14 @@ namespace Manage_File_Application
 
                 if (isCopy)
                 {
-                    copyAllInFolder(folder, destinationFolder);
+                    copyAllInFolder(path, destinationPath);
                 }
                 else
                 {
                     folder.MoveTo(destinationPath);
+                    btnPaste.Enabled = false;
                 }
+
                 elasticFiles.Add(new Model.File()
                 {
                     Id = folder.FullName,
@@ -1106,8 +1090,8 @@ namespace Manage_File_Application
                     Extension = folder.Extension,
                     DateCreate = folder.CreationTime
                 });
+
                 refresh();
-                btnPaste.Enabled = false;
             }
             catch (Exception e)
             {
@@ -1115,22 +1099,55 @@ namespace Manage_File_Application
             }
         }
 
-        private void copyAllInFolder(DirectoryInfo folder, DirectoryInfo destinationFolder)
+        private void copyAllInFolder(string sourceDirName, string destinationPath)
         {
-            Directory.CreateDirectory(destinationFolder.FullName);
+            DirectoryInfo folder = new DirectoryInfo(sourceDirName);
+            DirectoryInfo[] folders = folder.GetDirectories();
 
-            foreach (FileInfo file in folder.GetFiles())
+            string newDestinationPath = destinationPath;
+
+            // If the destination directory does not exist -> create it
+            if (!Directory.Exists(destinationPath))
             {
-                file.CopyTo(System.IO.Path.Combine(destinationFolder.FullName, file.Name));
+                Directory.CreateDirectory(destinationPath);
+            }
+            else
+            {
+                int num = 0;
+                while (Directory.Exists(destinationPath))
+                {
+                    var tmp = System.IO.Path.GetFileName(System.IO.Path.GetDirectoryName(destinationPath)) + " - Copy (" + num + ")";
+                    newDestinationPath = System.IO.Path.Combine(txtPath.Text, tmp);
+                    destinationPath = newDestinationPath;
+                    num++;
+                }
+                Directory.CreateDirectory(destinationPath);
             }
 
-            foreach (DirectoryInfo subFolder in folder.GetDirectories())
+            // Get the file contents of the directory to copy
+            FileInfo[] files = folder.GetFiles();
+
+            foreach (FileInfo file in files)
             {
-                DirectoryInfo destPath = new DirectoryInfo(System.IO.Path.Combine(destinationFolder.FullName, subFolder.Name));
-                copyAllInFolder(subFolder, destPath);
+                // Create the path to the new copy of the file
+                string tempPath = System.IO.Path.Combine(destinationPath, file.Name);
+
+                // Copy the file
+                file.CopyTo(tempPath, false);
+            }
+
+            // Copy the subFolder
+            foreach (DirectoryInfo subFolder in folders)
+            {
+                // Create the subFolder
+                string temppath = System.IO.Path.Combine(destinationPath, subFolder.Name);
+
+                // Copy the subFolder
+                copyAllInFolder(subFolder.FullName, temppath);
             }
         }
 
+        // paste file copy or cut
         private void pasteFileCopyOrCut(string path, bool isCopy)
         {
             try
@@ -1141,18 +1158,23 @@ namespace Manage_File_Application
 
                 if (isCopy)
                 {
-                    if (File.Exists(destinationPath))
+                    // Copy - nếu file trùng tên thì thêm chữ Copy (num)
+                    int num = 0;
+                    while (File.Exists(destinationPath))
                     {
-                        var tmp = System.IO.Path.GetFileNameWithoutExtension(file.Name) + " - Copy (" + numFilePaste + ")" + file.Extension;
+                        var tmp = System.IO.Path.GetFileNameWithoutExtension(file.Name) + " - Copy (" + num + ")" + file.Extension;
                         newDestinationPath = System.IO.Path.Combine(txtPath.Text, tmp);
-                        numFilePaste++;
+                        destinationPath = newDestinationPath;
+                        num++;
                     }
                     file.CopyTo(newDestinationPath);
                 }
-                else
+                else // cut
                 {
                     file.MoveTo(destinationPath);
+                    btnPaste.Enabled = false;
                 }
+
                 elasticFiles.Add(new Model.File()
                 {
                     Id = file.FullName,
@@ -1162,8 +1184,8 @@ namespace Manage_File_Application
                     Extension = file.Extension,
                     DateCreate = file.CreationTime
                 });
+
                 refresh();
-                btnPaste.Enabled = false;
             }
             catch (Exception e)
             {
@@ -1191,6 +1213,7 @@ namespace Manage_File_Application
                 string newFolderPath = path;
                 int numFolder = 1;
 
+                // Nếu tên folder trùng thì thêm (num) sau tên
                 while (Directory.Exists(newFolderPath))
                 {
                     newFolderPath = path + " (" + numFolder + ")";
@@ -1243,7 +1266,6 @@ namespace Manage_File_Application
                 string newFilePath = path;
 
                 int numFile = 1;
-
                 while (File.Exists(newFilePath))
                 {
                     var tmp = System.IO.Path.GetFileNameWithoutExtension(defaultFile) + " (" + numFile + ").txt";
