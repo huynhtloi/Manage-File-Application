@@ -224,8 +224,9 @@ namespace Manage_File_Application
             // Tag
             itemList.Tag = fileInfo;
 
-            // Col Path
-            itemList.SubItems.Add(fileInfo.FullName);
+            // Col size
+            // Tính size file
+            itemList.SubItems.Add(calFileSize(fileInfo.Length));
 
             // Col Extension
             itemList.SubItems.Add(fileInfo.Extension);
@@ -237,9 +238,9 @@ namespace Manage_File_Application
             // Col Modified
             itemList.SubItems.Add(fileInfo.LastWriteTime.ToString());
 
-            // Col size
-            // Tính size file
-            itemList.SubItems.Add(calFileSize(fileInfo.Length));
+            // Col Path
+            itemList.SubItems.Add(fileInfo.FullName);
+
 
         }
 
@@ -279,7 +280,7 @@ namespace Manage_File_Application
             itemList.Tag = dirInfo;
 
             // path
-            itemList.SubItems.Add(dirInfo.FullName);
+            itemList.SubItems.Add("");
 
             // extension
             itemList.SubItems.Add("Folder");
@@ -289,6 +290,9 @@ namespace Manage_File_Application
 
             // Modified
             itemList.SubItems.Add(dirInfo.LastWriteTime.ToString());
+
+            // path
+            itemList.SubItems.Add(dirInfo.FullName);
         }
 
         // Scan file trong thư mục hiện tại theo đường dẫn để add vào listview
