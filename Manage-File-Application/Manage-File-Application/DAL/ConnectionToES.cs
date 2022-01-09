@@ -24,7 +24,7 @@ namespace Manage_File_Application.DAL
             var node = new Uri("http://180.93.172.126:9200");
             settings = new ConnectionSettings(node)
                 .DefaultMappingFor<File>(i => i
-                    .IndexName("manager_files")
+                    .IndexName("files_manager_index")
                     .IdProperty(p => p.Id))
                 .EnableDebugMode()
                 .PrettyJson()

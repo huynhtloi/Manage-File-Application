@@ -23,7 +23,7 @@ namespace Manage_File_Application.ElasticCore
             if (query.Equals("Enter some text here"))
             {
                 response = connect.client.SearchAsync<File>(ele => ele
-                                    .Index("manager_files")
+                                    .Index("files_manager_index")
                                     ).Result.Documents.ToList();
                 return response;
             }
@@ -31,7 +31,7 @@ namespace Manage_File_Application.ElasticCore
             {
                 case 0:
                     response = connect.client.SearchAsync<File>(ele => ele
-                                    .Index("manager_files")
+                                    .Index("files_manager_index")
                                     .Query(qry => qry
                                         .QueryString(qryStr => qryStr
                                         .DefaultField(df => df.Name)
@@ -40,7 +40,7 @@ namespace Manage_File_Application.ElasticCore
 
                 case 1:
                     response = connect.client.SearchAsync<File>(ele => ele
-                                    .Index("manager_files")
+                                    .Index("files_manager_index")
                                     .Query(qry => qry
                                         .MatchPhrase(m=>m
                                             .Field(p => p.Content)
@@ -52,7 +52,6 @@ namespace Manage_File_Application.ElasticCore
             return null;
         }
 
-
         public bool CheckResponse(Nest.IResponse response)
         {
             if ((response.ApiCall.HttpStatusCode == 201 || response.ApiCall.HttpStatusCode == 200) && response.ApiCall.Success == true)
@@ -62,21 +61,19 @@ namespace Manage_File_Application.ElasticCore
             return false;
         }
 
-        //add new
         public bool Create(File file)
         {
             var response = connect.client.Index<File>(file, i => i
-                       .Index("manager_files")
+                       .Index("files_manager_index")
                        .Id(file.Id)
                        .Refresh(Elasticsearch.Net.Refresh.True));
             return CheckResponse(response);
         }
 
-        //
         public async Task<bool> Delete(string id)
         {
             var response = await connect.client.DeleteAsync<File>(id, i => i
-                .Index("manager_files")
+                .Index("files_manager_index")
                 .Refresh(Elasticsearch.Net.Refresh.True));
             return CheckResponse(response);
         }
