@@ -1140,7 +1140,7 @@ namespace Manage_File_Application
             DirectoryInfo[] folders = folder.GetDirectories();
 
             string newDestinationPath = destinationPath;
-
+            string nameFolder = new DirectoryInfo(destinationPath).Name;
             // If the destination directory does not exist -> create it
             if (!Directory.Exists(destinationPath))
             {
@@ -1151,7 +1151,7 @@ namespace Manage_File_Application
                 int num = 0;
                 while (Directory.Exists(destinationPath))
                 {
-                    var tmp = System.IO.Path.GetFileName(System.IO.Path.GetDirectoryName(destinationPath)) + " - Copy (" + num + ")";
+                    var tmp = nameFolder + " - Copy (" + num + ")";
                     newDestinationPath = System.IO.Path.Combine(txtPath.Text, tmp);
                     destinationPath = newDestinationPath;
                     num++;

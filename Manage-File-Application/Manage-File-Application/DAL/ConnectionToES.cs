@@ -21,7 +21,7 @@ namespace Manage_File_Application.DAL
         /// Constructor
         public ConnectionToES()
         {
-            var node = new Uri("http://180.93.172.126:9200");
+            var node = new Uri("http://huynhtanloi.tk:9200");
             settings = new ConnectionSettings(node)
                 .DefaultMappingFor<File>(i => i
                     .IndexName("files_manager_index")
